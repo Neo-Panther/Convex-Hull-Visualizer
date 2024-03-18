@@ -70,8 +70,12 @@ document.getElementById("next-button").addEventListener("click", function () {
     let k = 0;
     let temp = Number.MAX_SAFE_INTEGER;
     for (k = j; k < points.length; k++) {
-      if ((points[j-1].y - points[k].y) / (points[k].x - points[j-1].x) <= temp) {
-        temp = (points[j-1].y - points[k].y) / (points[k].x - points[j-1].x);
+      if (
+        (points[j - 1].y - points[k].y) / (points[k].x - points[j - 1].x) <=
+        temp
+      ) {
+        temp =
+          (points[j - 1].y - points[k].y) / (points[k].x - points[j - 1].x);
         t = k;
       }
     }
@@ -79,10 +83,11 @@ document.getElementById("next-button").addEventListener("click", function () {
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("x1", points[j - 1].x);
     line.setAttribute("y1", points[j - 1].y);
-    line.setAttribute("x2", points[j].x);
-    line.setAttribute("y2", points[j].y);
+    line.setAttribute("x2", points[t].x);
+    line.setAttribute("y2", points[t].y);
     line.setAttribute("stroke", "blue");
     svg.appendChild(line);
+    j = t%points.length;
   }
 });
 
