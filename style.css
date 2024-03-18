@@ -1,0 +1,50 @@
+* {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.svg-container {
+  width: calc(100% - 5px);
+  height: 400px;
+  padding: 0 1px 0 1px;
+  border: 1px #000000 solid;
+}
+
+.guide-container {
+  height: 100px;
+  background-color: #e6e6e6;
+  margin-top: -3px;
+  font-size: 14px;
+}
+
+.prev-button, .next-button {
+  width: 70px;
+  vertical-align: top;
+  height: 100%;
+  background-color: #9ee393;
+  display: inline-block;
+  color: rgb(0, 0, 0);
+
+  transition: all 0.5s ease;
+}
+
+.prev-button p, .next-button p {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.prev-button.disabled, .next-button.disabled {
+  background-color: #cfeacb;
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.text-container {
+  width: calc(100% - 150px);
+  height: 100%;
+  overflow-y: overlay;
+  display: inline-block;
+}
+
+#instruction {
+  padding: 5px 15px 5px 15px;
+  text-align: center;
+}
