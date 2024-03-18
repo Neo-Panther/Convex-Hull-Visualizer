@@ -1,14 +1,19 @@
 * {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 .svg-container {
-  width: calc(100% - 5px);
+  width: calc(100%);
   height: 400px;
   padding: 0 1px 0 1px;
   border: 1px #000000 solid;
+  background-color: #fff;
 }
-
+.dot {
+  fill: black;
+  stroke: none;
+  r: 5;
+}
 .guide-container {
   height: 100px;
   background-color: #e6e6e6;
@@ -16,7 +21,8 @@
   font-size: 14px;
 }
 
-.prev-button, .next-button {
+.prev-button,
+.next-button {
   width: 70px;
   vertical-align: top;
   height: 100%;
@@ -27,12 +33,14 @@
   transition: all 0.5s ease;
 }
 
-.prev-button p, .next-button p {
+.prev-button p,
+.next-button p {
   text-align: center;
   margin-top: 30px;
 }
 
-.prev-button.disabled, .next-button.disabled {
+.prev-button.disabled,
+.next-button.disabled {
   background-color: #cfeacb;
   color: rgba(0, 0, 0, 0.25);
 }
