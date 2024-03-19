@@ -12,7 +12,10 @@
 .dot {
   fill: black;
   stroke: none;
-  r: 5;
+}
+.dot.hidden{
+  fill: #fff;
+  stroke: none;
 }
 .guide-container {
   height: 100px;
