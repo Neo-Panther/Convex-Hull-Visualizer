@@ -1,7 +1,7 @@
 const points = [];
-var width = window.innerWidth * (3 / 4) - 15,
-  height = window.innerHeight - 15;
-console.log(width + "::" + height);
+let convexHull = [];
+let actionHistory = []; // Array to store the history of actions
+let currentStep = "drawLines"; // Track the current step of the algorithm
 
 const svg_container = document.getElementsByClassName("svg-container")[0];
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -23,99 +23,93 @@ svg.onclick = function (event) {
   points.push({ x: x - offx, y: y - offy });
   console.log("x-cor" + x + "y-cor" + y);
 };
-// console.log(svg.width + "::" + svg.height + "::" + svg.onclick);
-
-let clickCount = 0;
-let j = 0;
-let t = 0;
 
 document.getElementById("next-button").addEventListener("click", function () {
-  clickCount++;
-  console.log("The next button has been clicked " + clickCount + " times");
-  if (points.length < 2) {
-    alert("Please add at least two points by clicking on the SVG.");
+  if (points.length < 3) {
+    alert("Please add at least three points by clicking on the SVG.");
     return;
   }
 
-  // Sort the points by x and then y coordinate
-  points.sort(function (a, b) {
-    return a.x - b.x || b.y - a.y;
-  });
+  if (convexHull.length === 0) {
+    // Sort the points by x and then y coordinate
+    points.sort(function (a, b) {
+      return a.x - b.x || b.y - a.y;
+    });
+    convexHull.push(points[0]);
+  }
 
-  const lines = svg.getElementsByTagName("line");
-
-  if (clickCount % 2 !== 0) {
-    for (let i = j; i < points.length; i++) {
+  if (currentStep === "drawLines") {
+    const leftmost = convexHull[convexHull.length - 1];
+    for (let i = 0; i < points.length; i++) {
+      if (points[i] === leftmost) continue;
       const line = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "line"
       );
-      line.setAttribute("x1", points[j].x);
-      line.setAttribute("y1", points[j].y);
+      line.setAttribute("x1", leftmost.x);
+      line.setAttribute("y1", leftmost.y);
       line.setAttribute("x2", points[i].x);
       line.setAttribute("y2", points[i].y);
       line.setAttribute("stroke", "red");
       line.setAttribute("stroke-dasharray", "5,5");
       svg.appendChild(line);
     }
-    j = j + 1;
-  } else {
-    const lines = Array.from(svg.getElementsByTagName("line"));
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].getAttribute("stroke-dasharray")) {
-        lines[i].parentNode.removeChild(lines[i]);
-      }
-    }
+    currentStep = "addLines";
+  } else if (currentStep === "addLines") {
+    // Remove previously drawn dashed lines
+    const dashedLines = svg.querySelectorAll("line[stroke-dasharray]");
+    dashedLines.forEach((line) => line.remove());
 
-    let k = 0;
-    let temp = Number.MAX_SAFE_INTEGER;
-    for (k = j; k < points.length; k++) {
+    const leftmost = convexHull[convexHull.length - 1];
+    let nextPoint = points[0];
+    for (let i = 1; i < points.length; i++) {
+      if (points[i] === leftmost) continue;
+      let direction = crossProduct(leftmost, nextPoint, points[i]);
       if (
-        (points[j - 1].y - points[k].y) / (points[k].x - points[j - 1].x) <=
-        temp
+        nextPoint === leftmost ||
+        direction > 0 ||
+        (direction === 0 &&
+          distance(leftmost, points[i]) > distance(leftmost, nextPoint))
       ) {
-        temp =
-          (points[j - 1].y - points[k].y) / (points[k].x - points[j - 1].x);
-        t = k;
+        nextPoint = points[i];
       }
     }
-
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("x1", points[j - 1].x);
-    line.setAttribute("y1", points[j - 1].y);
-    line.setAttribute("x2", points[t].x);
-    line.setAttribute("y2", points[t].y);
-    line.setAttribute("stroke", "blue");
-    svg.appendChild(line);
-    j = t%points.length;
+    convexHull.push(nextPoint);
+    // Add the action to history
+    actionHistory.push({ action: "next", point: nextPoint });
+    // Draw the convex hull
+    if (convexHull.length >= 2) {
+      const line = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "line"
+      );
+      line.setAttribute("x1", convexHull[convexHull.length - 2].x);
+      line.setAttribute("y1", convexHull[convexHull.length - 2].y);
+      line.setAttribute("x2", convexHull[convexHull.length - 1].x);
+      line.setAttribute("y2", convexHull[convexHull.length - 1].y);
+      line.setAttribute("stroke", "blue");
+      svg.appendChild(line);
+    }
+    currentStep = "drawLines";
   }
 });
 
-/*
-var svga = d3.select(".svg-container").append("svg")
-.on("click", function() {
-  if (fxn_i == 0) {
-    vertices.push(d3.mouse(this));
-    redrawVerticies();
-
-    // check if at least 5 edges in upper hull
-    var [xs, ys] = unzip(vertices);
-    var x_min = [width, 0],
-      x_max = [0, 0];
-    for (var i = 0; i < vertices.length; i++) {
-      if (vertices[i][0] < x_min[0]) x_min = vertices[i];
-      if (vertices[i][0] > x_max[0]) x_max = vertices[i];
-    }
-
-    // make test if point is above or below divider
-    var sl = (x_max[1] - x_min[1]) / (x_max[0] - x_min[0]);
-    var inLowerHull = function(d) {
-      return d[1] <= (d[0] - x_min[0]) * sl + x_min[1]
-    }
-
-    var upperHullCount = svg.selectAll('.vertex').filter(function(d) { return inLowerHull(d); }).size();
-    if (upperHullCount >= 6) $('.next-button').removeClass('disabled');
-    else $('.next-button').addClass('disabled');
+document.getElementById("prev-button").addEventListener("click", function () {
+  if (actionHistory.length === 0) {
+    alert("No previous actions to undo.");
+    return;
+  }
+  const lastAction = actionHistory.pop();
+  if (lastAction.action === "next") {
+    svg.removeChild(svg.lastChild);
+    convexHull.pop();
   }
 });
-*/
+
+function crossProduct(p1, p2, p3) {
+  return (p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y);
+}
+
+function distance(p1, p2) {
+  return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+}
