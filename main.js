@@ -8,7 +8,11 @@ const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
-svg.onclick = function (event) {
+
+let clickKara = 0;
+let svgClickListener = null; // Variable to store the click listener
+
+function addPointToSvg(event) {
   const x = event.clientX,
     y = event.clientY;
   const off = svg_container.getBoundingClientRect();
@@ -22,9 +26,29 @@ svg.onclick = function (event) {
   svg.appendChild(dot);
   points.push({ x: x - offx, y: y - offy });
   console.log("x-cor" + x + "y-cor" + y);
-};
+}
+
+// Function to enable or disable the SVG click listener
+function toggleSvgClickListener(enable) {
+  if (enable) {
+    svgClickListener = function (event) {
+      addPointToSvg(event);
+    };
+    svg.addEventListener("click", svgClickListener);
+  } else {
+    svg.removeEventListener("click", svgClickListener);
+  }
+}
+
+if (clickKara === 0) {
+  toggleSvgClickListener(true);
+}
 
 document.getElementById("next-button").addEventListener("click", function () {
+  clickKara = 1;
+  // Disable further inputs
+  toggleSvgClickListener(false);
+
   if (points.length < 3) {
     alert("Please add at least three points by clicking on the SVG.");
     return;
