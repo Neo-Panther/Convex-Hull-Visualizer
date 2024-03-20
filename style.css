@@ -59,3 +59,20 @@
   padding: 5px 15px 5px 15px;
   text-align: center;
 }
+
+.median {
+  stroke: pink;
+}
+.divider {
+  stroke: black;
+}
+.randomline{
+  stroke: black;
+}
+
+.dot.left {
+  fill: rgb(157, 0, 255);
+}
+.dot.right {
+  fill: rgb(255, 174, 0);
+}
