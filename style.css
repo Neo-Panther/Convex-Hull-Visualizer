@@ -1,58 +1,111 @@
-* {
-  font-family: Georgia, "Times New Roman", Times, serif;
+/* CSS code */
+body {
+  background-color: #1e1e1e;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #333;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; /* Added to stack elements vertically */
+  height: calc(100vh - 80px); /* Adjust based on your header height */
 }
 
 .svg-container {
-  width: calc(100%);
+  width: 50%;
   height: 400px;
-  padding: 0 1px 0 1px;
-  border: 1px #000000 solid;
-  background-color: #fff;
+  border: 2px solid #444;
+  margin-bottom: 20px;
+  
+ /* Added to create space between SVG and buttons */
 }
-.dot {
-  fill: black;
-  stroke: none;
-  r: 5;
-}
+
 .guide-container {
-  height: 100px;
-  background-color: #e6e6e6;
-  margin-top: -3px;
-  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  padding: 10px;
+  border-radius: 10px;
 }
 
-.prev-button,
-.next-button {
-  width: 70px;
-  vertical-align: top;
-  height: 100%;
-  background-color: #9ee393;
-  display: inline-block;
-  color: rgb(0, 0, 0);
-
-  transition: all 0.5s ease;
+#prev-button,
+#next-button {
+  background-color: #666;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 10%;
 }
 
-.prev-button p,
-.next-button p {
-  text-align: center;
-  margin-top: 30px;
+#next-button:hover {
+  background-color: rgb(3, 179, 3);
 }
-
-.prev-button.disabled,
-.next-button.disabled {
-  background-color: #cfeacb;
-  color: rgba(0, 0, 0, 0.25);
+#prev-button:hover {
+  background-color: rgb(224, 9, 9);
 }
-
 .text-container {
-  width: calc(100% - 150px);
-  height: 100%;
-  overflow-y: overlay;
-  display: inline-block;
+  flex-grow: 1;
+  text-align: center;
+  padding: 0 20px; /* Added padding to create space between buttons and instructions */
 }
 
 #instruction {
-  padding: 5px 15px 5px 15px;
-  text-align: center;
+  margin: 0;
+}
+
+/* CSS code */
+/* CSS code */
+.hull-point {
+  fill: red; /* Change the color to your desired color */
+  stroke: none;
+}
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 1000; /* Length of the dashed line */
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scalePoint {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.dot {
+  fill: white;
+  stroke: none;
+  r: 5;
+}
+
+/* Add animation for lines */
+.line {
+  animation: drawLine 0.3s ease-in-out;
+}
+
+/* Add animation for points */
+.dot {
+  animation: scalePoint 0.5s ease forwards;
 }

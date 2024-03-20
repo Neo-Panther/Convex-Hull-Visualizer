@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jarvis March Algorithm</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <h1>Jarvis March Algorithm</h1>
+    <header>
+      <h1>Jarvis March Algorithm</h1>
+    </header>
 
     <div class="main">
       <div class="svg-container"></div>
 
       <div class="guide-container">
-        <button id="prev-button" class="prev-button disabled">
+        <button id="prev-button">
           <p>Previous Step</p>
         </button>
 
@@ -19,11 +23,12 @@
           <p id="instruction"></p>
         </div>
 
-        <button id="next-button" class="next-button disabled">
-          <p>Next<br />Step</p>
+        <button id="next-button">
+          <p>Next Step</p>
         </button>
       </div>
     </div>
+
     <script src="./main.js"></script>
   </body>
 </html>

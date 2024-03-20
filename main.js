@@ -12,6 +12,9 @@ svg.setAttribute("height", "100%");
 let clickKara = 0;
 let svgClickListener = null; // Variable to store the click listener
 
+// JavaScript code
+
+// Add a point to the SVG
 function addPointToSvg(event) {
   const x = event.clientX,
     y = event.clientY;
@@ -74,8 +77,9 @@ document.getElementById("next-button").addEventListener("click", function () {
       line.setAttribute("y1", leftmost.y);
       line.setAttribute("x2", points[i].x);
       line.setAttribute("y2", points[i].y);
-      line.setAttribute("stroke", "red");
-      line.setAttribute("stroke-dasharray", "5,5");
+      line.setAttribute("stroke", "teal");
+      line.setAttribute("stroke-dasharray", "10,10");
+      line.setAttribute("class", "line"); // Add class for animation
       svg.appendChild(line);
     }
     currentStep = "addLines";
@@ -111,7 +115,9 @@ document.getElementById("next-button").addEventListener("click", function () {
       line.setAttribute("y1", convexHull[convexHull.length - 2].y);
       line.setAttribute("x2", convexHull[convexHull.length - 1].x);
       line.setAttribute("y2", convexHull[convexHull.length - 1].y);
-      line.setAttribute("stroke", "blue");
+      line.setAttribute("stroke", "red");
+      line.setAttribute("stroke-width", "2.5");
+      line.setAttribute("class", "line"); // Add class for animation
       svg.appendChild(line);
     }
     currentStep = "drawLines";
