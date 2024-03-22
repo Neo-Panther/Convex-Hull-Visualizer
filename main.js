@@ -143,12 +143,13 @@ function upper_hull(pmin, pmax, T){
     median = (T[Math.floor(T.length/2)].x + T[Math.floor(T.length/2) - 1].x)/2;
   }
   ACTIONS.push({
-    aline: {
+    aline: [{
       x1: median,
       x2: median,
       y1: 0,
-      y2: svg_container.getAttribute("innerHeight")
-    }
+      y2: Number(svg.getAttribute("innerHeight")),
+      c: "median"
+    }]
   });
   const Tleft = [], Tright = [];
   for(const point of T){
@@ -158,27 +159,109 @@ function upper_hull(pmin, pmax, T){
       Tright.push(point);
     }
   }
+  ACTIONS.push({
+    cdot: [...Tleft.map((point) =>{ return {
+      x: point.x,
+      y: point.y,
+      c: "left"
+    }}), ...Tright.map((point) => { return {
+      x: point.x,
+      y: point.y,
+      c: "right"
+    }})],
+    rline: [{
+      x1: median,
+      x2: median,
+      y1: 0,
+      y2: Number(svg.getAttribute("innerHeight")),
+      c: "medianx"
+    }]
+  });
   const temp = upper_bridge(T, median);
   const pl = temp[0], pr = temp[1];
   console.log("check1", pl, pr);
+  const removepoints = [];
   const slopeleft = getSlope(pmin, pl);
   for(var i = Tleft.length - 1; i >= 0; i--){
     if(getSlope(pmin, Tleft[i]) < slopeleft){
+      removepoints.push(Tleft[i]);
       Tleft.splice(i, 1);
     }
   }
-  // Tleft.push(pl);
   const sloperight = getSlope(pmax, pr);
   for(var i = Tright.length - 1; i >= 0; i--){
     if(getSlope(pmax, Tright[i]) > sloperight){
+      removepoints.push(Tright[i]);
       Tright.splice(i, 1);
     }
   }
-  // Tright.push(pr);
   const ans = [];
+  ACTIONS.push({
+    aline: [{
+      x1: pmin.x,
+      x2: pl.x,
+      y1: pmin.y,
+      y2: pl.y,
+      c: "trapezium"
+    },
+    {
+      x1: pmin.x,
+      x2: pmax.x,
+      y1: pmin.y,
+      y2: pmax.y,
+      c: "trapezium"
+    },
+    {
+      x1: pmax.x,
+      x2: pr.x,
+      y1: pmax.y,
+      y2: pr.y,
+      c: "trapezium"
+    }],
+    rdot: [...removepoints]
+  });
+  ACTIONS.push({
+    rdot: [...Tright],
+    rline: [{
+      x1: pmin.x,
+      x2: pl.x,
+      y1: pmin.y,
+      y2: pl.y,
+      c: "trapezium"
+    },
+    {
+      x1: pmin.x,
+      x2: pmax.x,
+      y1: pmin.y,
+      y2: pmax.y,
+      c: "trapezium"
+    },
+    {
+      x1: pmax.x,
+      x2: pr.x,
+      y1: pmax.y,
+      y2: pr.y,
+      c: "trapezium"
+    }]
+  });
   ans.push(...upper_hull(pmin, pl, Tleft));
   ans.push(pl, pr);
+  ACTIONS.push({
+    adot: [...Tright.map((point) => { return {
+      x: point.x,
+      y: point.y,
+      c: "right"
+    }})],
+    rdot: [...Tleft]
+  })
   ans.push(...upper_hull(pr, pmax, Tright));
+  ACTIONS.push({
+    adot: [...Tleft, ...removepoints],
+    cdot: [...Tright.map((point) => { return {
+      x: point.x,
+      y: point.y,
+    }})],
+  })
   console.log("uhull out");
   console.log(...ans);
   return ans;
@@ -193,6 +276,15 @@ function upper_bridge(S, L) {
 
   if (S.length === 2) {
     console.log("ubridge out",  [S[0], S[1]]);
+    ACTIONS.push({
+      aline: [{
+        x1: S[0].x,
+        x2: S[1].x,
+        y1: S[0].y,
+        y2: S[1].y,
+        c: "hull"
+      }]
+    });
     return S[0].x < S[1].x ? [S[0], S[1]] : [S[1], S[0]];
   }
 
@@ -205,12 +297,15 @@ function upper_bridge(S, L) {
     }
   }
   let newPairs = [];
+  const removepoints = [];
   pairs.forEach(pair => {
     if (pair[0].x === pair[1].x) {
       if (pair[0].y > pair[1].y) {
         candidates.push(pair[1]);
+        removepoints.push(pair[0]);
       } else {
         candidates.push(pair[0]);
+        removepoints.push(pair[1]);
       }
     } else {
       pair.k = getSlope(pair[0], pair[1]);
@@ -218,11 +313,30 @@ function upper_bridge(S, L) {
     }
   });
   pairs = newPairs;
-
+  ACTIONS.push({
+    aline: [...pairs.map((pair) => { return {
+      x1: pair[0].x,
+      x2: pair[1].x,
+      y1: pair[0].y,
+      y2: pair[1].y,
+      c: "randompairline"
+    }})],
+    rdot: [...removepoints]
+  });
   // Calculate the median slope
   let slopes = pairs.map(pair => pair.k);
   slopes.sort((a, b) => a - b);
   let medianSlope = slopes[Math.floor(slopes.length / 2)];
+
+  ACTIONS.push({
+    cline: [{
+      x1: pairs[Math.floor(slopes.length / 2)][0].x,
+      x2: pairs[Math.floor(slopes.length / 2)][1].x,
+      y1: pairs[Math.floor(slopes.length / 2)][0].y,
+      y2: pairs[Math.floor(slopes.length / 2)][1].y,
+      c: "medianslope"
+    }]
+  });
 
   // Divide pairs into SMALL, EQUAL, and LARGE based on their slopes
   let SMALL = pairs.filter(pair => pair.k < medianSlope);
@@ -230,14 +344,33 @@ function upper_bridge(S, L) {
   let LARGE = pairs.filter(pair => pair.k > medianSlope);
 
   // Find a supporting line of S with slope medianSlope
-  let intercept = Math.max(...S.map(point => -point.y - medianSlope * point.x));
+  let intercept = Math.max(...S.map((point) => -point.y - medianSlope * point.x));
   let MAX = S.filter(point => Math.abs(-point.y - medianSlope * point.x - intercept) < 0.03);
   let pk = MAX.reduce((minPoint, point) => point.x < minPoint.x ? point : minPoint, MAX[0]);
   let pm = MAX.reduce((maxPoint, point) => point.x > maxPoint.x ? point : maxPoint, MAX[0]);
 
+  ACTIONS.push({
+    aline: [getSupportingLine(medianSlope, intercept)]
+  });
   // Determine if h contains the bridge
   if (pk.x < L && pm.x >= L) {
-    console.log("ubridge out",   [pk, pm]);
+    console.log("ubridge out", [pk, pm]);
+    ACTIONS.push({
+      rline: [getSupportingLine(medianSlope, intercept), ...pairs.map((pair) => { return {
+        x1: pair[0].x,
+        x2: pair[1].x,
+        y1: pair[0].y,
+        y2: pair[1].y,
+        c: "randompairline"
+      }})],
+      aline: [{
+        x1: pk.x,
+        x2: pm.x,
+        y1: pk.y,
+        y2: pm.y,
+        c: "hull"
+      }]
+    });
     return [pk, pm];
   }
 
@@ -248,6 +381,10 @@ function upper_bridge(S, L) {
         candidates.push(pair[1]);
     });
     LARGE.concat(EQUAL).forEach(pair => candidates.push(pair[1]));
+    ACTIONS.push({
+      rdot: LARGE.concat(EQUAL).map(pair => pair[0])
+    });
+    removepoints.push(...LARGE.concat(EQUAL).map(pair => pair[0]))
   }
 
   // h contains only points of S to the right of L
@@ -257,10 +394,36 @@ function upper_bridge(S, L) {
       candidates.push(pair[0]);
       candidates.push(pair[1]);
     });
+    ACTIONS.push({
+      rdot: SMALL.concat(EQUAL).map(pair => pair[1])
+    });
+    removepoints.push(...SMALL.concat(EQUAL).map(pair => pair[1]))
   }
+  ACTIONS.push({
+    rline: [getSupportingLine(medianSlope, intercept), ...pairs.map((pair) => { return {
+      x1: pair[0].x,
+      x2: pair[1].x,
+      y1: pair[0].y,
+      y2: pair[1].y,
+      c: "randompairline"
+    }})]
+  });
   const ans = upper_bridge(candidates, L);
+  ACTIONS.push({
+    adot: [...removepoints],
+  });
   console.log("ubridge out", ans);
   return ans;
+}
+
+function getSupportingLine(medianSlope, intercept){
+  return {
+    x1: 0,
+    x2: Number(svg.getAttribute("innerWidth")),
+    y1: -intercept,
+    y2: -(medianSlope*Number(svg.getAttribute("innerWidth"))+intercept),
+    c: "support"
+  }
 }
 
 // Add a point to the SVG
