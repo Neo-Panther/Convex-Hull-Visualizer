@@ -148,7 +148,7 @@ function upper_hull(pmin, pmax, T){
       x2: median,
       y1: 0,
       y2: Number(svg.getAttribute("innerHeight")),
-      c: "median"
+      c: "medianx"
     }]
   });
   const Tleft = [], Tright = [];
