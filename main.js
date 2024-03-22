@@ -9,10 +9,15 @@ svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
 const ACTIONS = [];
 /**
- * 
- * 
- * 
- */
+ * Action object
+ * adot : {x: number, y: number, c: class}[]  // add these dots
+ * rdot : {x: number, y: number, c: class}[]  // remove these dots
+ * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // add these lines
+ * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines
+ * cdot : {x: number, y: number, c: class}[]  // change dot class
+ * cline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // change line class
+ * default class: solid black
+*/
 let clickKara = 0;
 let svgClickListener = null; // Variable to store the click listener
 
@@ -66,11 +71,34 @@ function kps(points){
   }
   lowerHull.push(plmin, plmax);
   const ans = [];
+
+  ACTIONS.push({
+    aline: [{x1: pumin.x, x2: pumin.x, y1: pumin.y, y2: pumin.y, c: "divider"}, {x1: plmin.x, x2: plmin.x, y1: plmin.y, y2: plmin.y, c: "divider"}]
+  });
+  ACTIONS.push({
+    rdot: lowerHull.filter((point) => point !== pumax || point !== pumin),
+    rline: [{x1: pumin.x, x2: pumin.x, y1: pumin.y, y2: pumin.y, c: "divider"}, {x1: plmin.x, x2: plmin.x, y1: plmin.y, y2: plmin.y, c: "divider"}]
+  });
   ans.push(...upper_hull(pumin, pumax, upperHull));
   const newLowerHull = [];
   for(const point of lowerHull){
     newLowerHull.push({x: point.x, y: -point.y});
   }
+  ACTIONS.push({
+    aline: [{x1: pumin.x, x2: pumin.x, y1: pumin.y, y2: pumin.y, c: "divider"}, {x1: plmin.x, x2: plmin.x, y1: plmin.y, y2: plmin.y, c: "divider"}],
+    adot: lowerHull.filter((point) => (point !== pumax || point !== pumin))
+  });
+  ACTIONS.push({
+    rdot: upperHull.filter((point) => {
+      for(const p of ans){
+        if(p.x === point.x && p.y === point.y){
+          return 0;
+        }
+      }
+      return 1;
+    }),
+    rline: [{x1: pumin.x, x2: pumin.x, y1: pumin.y, y2: pumin.y, c: "divider"}, {x1: plmin.x, x2: plmin.x, y1: plmin.y, y2: plmin.y, c: "divider"}]
+  });
   lowerHull = newLowerHull;
   plmin = {x: plmin.x, y: -plmin.y};
   plmax = {x: plmax.x, y: -plmax.y};
@@ -78,7 +106,19 @@ function kps(points){
   for(const point of temp){
     ans.push({x: point.x, y: -point.y});
   }
-  // ans.push(...(lower_hull(plmin, plmax, lowerHull).reverse()));
+  if(ans.length == 0){
+    ans.push(pumax, plmax);
+  }
+  ACTIONS.push({
+    adot: points.filter((point) => {
+      for(const p of ans){
+        if(p.x === point.x && p.y === point.y){
+          return 0;
+        }
+      }
+      return 1;
+    })
+  });
   console.log("kps out");
   console.log(...ans);
   return [
@@ -102,6 +142,14 @@ function upper_hull(pmin, pmax, T){
   } else {
     median = (T[Math.floor(T.length/2)].x + T[Math.floor(T.length/2) - 1].x)/2;
   }
+  ACTIONS.push({
+    aline: {
+      x1: median,
+      x2: median,
+      y1: 0,
+      y2: svg_container.getAttribute("innerHeight")
+    }
+  });
   const Tleft = [], Tright = [];
   for(const point of T){
     if(point.x < median){
