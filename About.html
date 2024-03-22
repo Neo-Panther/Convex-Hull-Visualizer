@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPS Algorithm</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Additional CSS for improved layout and spacing */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px; /* Add padding to the body */
+    }
+
+    .content {
+      max-width: 800px; /* Limit content width for better readability */
+      margin: 0 auto; /* Center content horizontally */
+    }
+
+    .content h1 {
+      margin-top: 0; /* Remove top margin for first heading */
+    }
+
+    .content p, .content ol {
+      margin-bottom: 20px; /* Add bottom margin for paragraphs and lists */
+    }
+
+    .content hr {
+      margin: 40px 0; /* Add more space before and after horizontal rule */
+      border: none;
+      border-top: 2px solid #ccc; /* Adjust horizontal rule style */
+    }
+
+    .content strong {
+      font-weight: bold; /* Bolden all strong elements */
+    }
+  </style>
+</head>
+<body>
+
+<div class="content">
+  <h1>KPS Algorithm for Convex Hull</h1>
+  <p>The <strong>KPS Algorithm</strong>, also known as the Kirkpatrick-Seidel Algorithm, is a computational geometry algorithm used for finding the convex hull of a set of points in a two-dimensional plane. The convex hull of a set of points is the smallest convex polygon that encloses all the points in the set.</p>
+  
+  <p>The <strong>KPS Algorithm</strong> is an efficient divide-and-conquer approach for computing the convex hull. It divides the set of points into two roughly equal-sized subsets, computes the convex hull of each subset recursively, and then merges the two convex hulls to obtain the final convex hull.</p>
+  
+  <p>Here's a high-level overview of the <strong>KPS Algorithm</strong>:</p>
+  <ol>
+    <li><strong>Divide the set of points:</strong> The algorithm starts by dividing the set of points into two roughly equal-sized subsets along a vertical line passing through the median of the points' x-coordinates.</li>
+    <li><strong>Recursively compute convex hulls:</strong> Recursively compute the convex hull of each subset. This step continues until the subset contains only a small number of points or a simple convex polygon is formed.</li>
+    <li><strong>Merge the convex hulls:</strong> Once the convex hulls of the subsets are computed, merge them to obtain the convex hull of the entire set of points. This is done by finding the upper and lower tangent lines between the two convex hulls and removing the redundant points.</li>
+    <li><strong>Repeat if necessary:</strong> If the resulting convex hull contains more than a certain number of points, repeat the process by dividing the set of points further and recursively computing the convex hulls.</li>
+  </ol>
+  
+  <p>The <strong>KPS Algorithm</strong> is known for its efficiency and achieves an expected time complexity of <strong>O(n log h)</strong>, where n is the number of input points and h is the number of points on the convex hull.</p>
+  
+  <p>In summary, the <strong>KPS Algorithm</strong> provides an efficient method for computing the convex hull of a set of points in the plane, making it a valuable tool in computational geometry and related fields.</p>
+  <hr>
+  <h1>Jarvis March Algorithm</h1>
+
+  <p>The <strong>Jarvis March Algorithm</strong>, also known as the Gift Wrapping Algorithm, is a simple algorithm used to compute the convex hull of a set of points in a two-dimensional plane. The convex hull is the smallest convex polygon that encloses all the given points.</p>
+
+  <h2>Algorithm Steps:</h2>
+
+  <ol>
+    <li><strong>Find the leftmost point:</strong> Start by finding the point with the lowest y-coordinate (and if there are ties, the point with the lowest x-coordinate). This point will always be a part of the convex hull.</li>
+    <li><strong>Next point selection:</strong> From the current point, iterate through all other points to find the one that forms the smallest counterclockwise angle with the current point and the positive x-axis. This point will be the next point on the convex hull.</li>
+    <li><strong>Repeat:</strong> Continue this process until the initial point is reached again, forming a closed loop and completing the convex hull.</li>
+  </ol>
+
+  <p>The <strong>Jarvis March Algorithm</strong> is straightforward to implement and understand, making it a popular choice for educational purposes and simple applications. However, it may not be the most efficient algorithm for large datasets. It has a time complexity of <strong>O(nh)</strong>, where n is the number of input points and h is the number of points on the convex hull.</p>
+  <hr>
+  <h1>Convex Hull Algorithms Comparison</h1>
+  
+  <h2>KPS Algorithm:</h2>
+  <p>
+    <strong>Approach:</strong> Divide-and-conquer approach.<br>
+    <strong>Time Complexity:</strong> O(n log h), where n is the number of points and h is the number of points on the convex hull.<br>
+    <strong>Efficiency:</strong> More efficient, especially for large datasets.<br>
+    <strong>Robustness:</strong> More robust and scalable for larger datasets.<br>
+    <strong>Applications:</strong> Widely used in computational geometry for efficiency-critical applications.
+  </p>
+  
+  <h2>Jarvis March Algorithm:</h2>
+  <p>
+    <strong>Approach:</strong> Iterative approach.<br>
+    <strong>Time Complexity:</strong> O(nh), where n is the number of points and h is the number of points on the convex hull.<br>
+    <strong>Efficiency:</strong> Simple but less efficient, better suited for small datasets.<br>
+    <strong>Robustness:</strong> Suitable for educational purposes and simple applications.<br>
+    <strong>Applications:</strong> Suitable for educational purposes and simple applications.
+  </p>
+  
+  <p><strong>Conclusion:</strong> Choose the KPS algorithm for efficiency and scalability, especially for large datasets. Opt for the Jarvis March algorithm for simplicity and smaller datasets.</p>
+</div>
+
+</body>
+</html>

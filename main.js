@@ -499,7 +499,7 @@ document.getElementById("next-button").addEventListener("click", function () {
       line.setAttribute("y2", points[i].y);
       line.setAttribute("stroke", "teal");
       line.setAttribute("stroke-dasharray", "10,10");
-      line.setAttribute("class", "line"); // Add class for animation
+      line.setAttribute("class", "dashed-line"); // Add class for animation
       svg.appendChild(line);
     }
     currentStep = "addLines";
@@ -535,9 +535,9 @@ document.getElementById("next-button").addEventListener("click", function () {
       line.setAttribute("y1", convexHull[convexHull.length - 2].y);
       line.setAttribute("x2", convexHull[convexHull.length - 1].x);
       line.setAttribute("y2", convexHull[convexHull.length - 1].y);
-      line.setAttribute("stroke", "red");
+      line.setAttribute("stroke", "white");
       line.setAttribute("stroke-width", "2.5");
-      line.setAttribute("class", "line"); // Add class for animation
+      line.setAttribute("class", "solid-line"); // Add class for animation
       svg.appendChild(line);
     }
     console.log("x:" + convexHull[convexHull.length - 2].x + ":y:" + convexHull[convexHull.length - 2].y);

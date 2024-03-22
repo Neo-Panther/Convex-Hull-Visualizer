@@ -1,6 +1,6 @@
 /* CSS code */
 body {
-  background-color: #1e1e1e;
+  background-color: #0F0F0F;
   color: #fff;
   font-family: Arial, sans-serif;
   margin: 0;
@@ -8,7 +8,7 @@ body {
 }
 
 header {
-  background-color: #333;
+  background-color: #232D3F;
   padding: 20px;
   text-align: center;
 }
@@ -38,27 +38,54 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: #0F0F0F;
   padding: 10px;
   border-radius: 10px;
 }
 
 #prev-button,
 #next-button {
-  background-color: #666;
+  background-color: #232D3F;
   border: none;
   color: #fff;
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s;
   border-radius: 10%;
+  width: 130px;
+  transition-property: scale;
+  transition-duration: 0.5s;
 }
 
+#page1-button,
+#page2-button{
+  background-color: #232d3f;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 10%;
+  width: 150px;
+  transition-property: scale;
+  transition-duration: 0.5s;
+}
+
+
 #next-button:hover {
-  background-color: rgb(3, 179, 3);
+  background-color: #005B41;
+  scale: 1.1
+}
+
+#page1-button:hover,
+#page2-button:hover{
+  background-color: gray;
+  scale: 1.1
 }
 #prev-button:hover {
-  background-color: rgb(224, 9, 9);
+  background-color: #005B41;
+  scale: 1.1
+
 }
 .text-container {
   flex-grow: 1;
@@ -76,14 +103,6 @@ h1 {
   fill: red; /* Change the color to your desired color */
   stroke: none;
 }
-@keyframes drawLine {
-  from {
-    stroke-dashoffset: 1000; /* Length of the dashed line */
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
 
 @keyframes scalePoint {
   from {
@@ -95,17 +114,52 @@ h1 {
 }
 
 .dot {
-  fill: white;
+  fill: rgb(119, 1, 255);
   stroke: none;
-  r: 5;
+  r: 7;
 }
 
 /* Add animation for lines */
-.line {
-  animation: drawLine 0.3s ease-in-out;
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 1000; /* Start with a fully-dashed line */
+  }
+  to {
+    stroke-dashoffset: 0; /* Transition to a fully-visible line */
+  }
+  from {
+    stroke-opacity: 0; /* Start with a fully-transparent line */
+  }
+  to {
+    stroke-opacity: 1; /* Transition to a fully-visible line */
+  }
+}
+
+/* Add animation for dashed lines */
+.dashed-line {
+  stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
+  stroke-dashoffset: 1000; /* Initially hide the dashed line */
+  animation: drawLine 1s ease forwards; /* Apply the animation */
+}
+
+.solid-line { /* Set the stroke color */
+  stroke-width: 2.5; /* Set the stroke width */
+  animation: drawLine 1s ease forwards;
 }
 
 /* Add animation for points */
 .dot {
-  animation: scalePoint 0.5s ease forwards;
+  animation: fadeInOut 0.5s ease forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0; /* Start with fully transparent */
+  }
+  30% {
+    opacity: 0.5; /* Fade in halfway through */
+  }
+  100% {
+    opacity: 1; /* Fade out at the end */
+  }
 }
