@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAA Assignment</title>
+  <style>
+    body {
+      background-color: #232D3F; /* Change to your desired background color */
+      margin: 0;
+      padding: 0;
+    }
+    /* Tab styles */
+    .tab {
+      overflow: hidden;
+      border: 1px solid #008170;
+      background-color: #005B41;
+    }
+
+    /* Tab links */
+    .tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      transition: background-color 0.3s;
+      color: #fff
+    }
+
+    /* Change background color of active tab link */
+    .tab button.active {
+      background-color: #008170;
+    }
+
+    .tab button:hover {
+      background-color: #00a786;
+    }
+
+    /* Tab content */
+    .tabcontent {
+      display: none;
+      padding: 6px 12px;
+      border-top: none;
+      width: 100%;
+      height: calc(100vh - 40px); /* Adjust based on your tab and iframe padding */
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'page1')" id="defaultOpen">KPS</button>
+  <button class="tablinks" onclick="openTab(event, 'page2')">Jarvis March</button>
+  <button class="tablinks" onclick="openTab(event, 'page3')">About</button>
+</div>
+
+<div id="page1" class="tabcontent">
+  <iframe src="page1.html"></iframe>
+</div>
+
+<div id="page2" class="tabcontent">
+  <iframe src="page2.html"></iframe>
+</div>
+
+<div id="page3" class="tabcontent">
+  <iframe src="About.html"></iframe>
+</div>
+
+<script>
+  // Function to open a specific tab
+  function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+
+    // Hide all tab content
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Deactivate all tab links
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the selected tab content and activate the tab link
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  // Open the default tab on page load
+  document.getElementById("defaultOpen").click();
+</script>
+
+</body>
+</html>
