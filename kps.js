@@ -32,7 +32,6 @@ function getSlope(point1, point2) {
 }
 
 function kps(points) {
-  console.log("kps in", ...points);
   points.sort(function (a, b) {
     return a.x - b.x || b.y - a.y;
   });
@@ -138,17 +137,13 @@ function kps(points) {
       return 1;
     }),
   });
-  console.log("kps out");
-  console.log(...ans);
   return [
     ...new Map(ans.map((point) => [`${point.x}:${point.y}`, point])).values(),
   ];
 }
 
 function upper_hull(pmin, pmax, T) {
-  console.log("uhull in", pmin, pmax, T);
   if (pmin.x === pmax.x && pmin.y === pmax.y) {
-    console.log("uhull out", []);
     return [];
   }
   T.sort(function (a, b) {
@@ -204,7 +199,6 @@ function upper_hull(pmin, pmax, T) {
   const temp = upper_bridge(T, median);
   const pl = temp[0],
     pr = temp[1];
-  console.log("check1", pl, pr);
   const removepoints = [];
   const slopeleft = getSlope(pmin, pl);
   for (var i = Tleft.length - 1; i >= 0; i--) {
@@ -296,9 +290,7 @@ function upper_hull(pmin, pmax, T) {
       pc: "right",
       c: ""
     }})],
-  })
-  console.log("uhull out");
-  console.log(...ans);
+  });
   return ans;
 }
 
@@ -306,11 +298,9 @@ function upper_bridge(S, L) {
   S.sort(function (a, b) {
     return a.x - b.x || b.y - a.y;
   });
-  console.log("ubridge in", S, L);
   let candidates = [];
 
   if (S.length === 2) {
-    console.log("ubridge out", [S[0], S[1]]);
     ACTIONS.push({
       aline: [
         {
@@ -407,7 +397,6 @@ function upper_bridge(S, L) {
   });
   // Determine if h contains the bridge
   if (pk.x < L && pm.x >= L) {
-    console.log("ubridge out", [pk, pm]);
     ACTIONS.push({
       rline: [
         getSupportingLine(medianSlope, intercept),
@@ -477,7 +466,6 @@ function upper_bridge(S, L) {
   ACTIONS.push({
     adot: [...removepoints],
   });
-  console.log("ubridge out", ans);
   return ans;
 }
 
@@ -498,6 +486,7 @@ function addPointToSvg(x, y, c) {
   dot.setAttribute("cy", y);
   if(c) dot.setAttribute("class", c);
   svg.appendChild(dot);
+  console.log("element=", dot);
 }
 
 function addLineToSvg(x1, y1, x2, y2, c){
@@ -511,6 +500,7 @@ function addLineToSvg(x1, y1, x2, y2, c){
   line.setAttribute("y2", y2);
   if(c)  line.classList.add(c);
   svg.appendChild(line);
+  console.log("element=", line);
 }
   
 svg.addEventListener("click", function(event) {
@@ -520,63 +510,77 @@ svg.addEventListener("click", function(event) {
   }
   const off = svg_container.getBoundingClientRect();
   points.push({ x: event.clientX - off.left, y: event.clientY - off.top });
-  if(points.length > 2 && nxtbtn.classList.contains("disabled")){
+  if(points.length === 3){
     nxtbtn.classList.remove("disabled");
   }
   addPointToSvg(event.clientX - off.left, event.clientY - off.top, "");
-})
+});
 
 
 nxtbtn.addEventListener("click", function () {
   if(nxtbtn.classList.contains("disabled")){
     alert("Please add at least three points by clicking on the SVG.");
     return;
-  } else {
+  } else if(clickKara === 0) {
     // Disable further inputs
     svg.classList.add("disabled");
+    console.log("kps answer");
+    console.log(...kps(points));
   }
 
   clickKara += 1;
-  if(clickKara === 1){
-    kps(points);
+  if(clickKara >= ACTIONS.length){
+    nxtbtn.classList.add("disabled");
+    return;
   }
   currentAction = ACTIONS[clickKara-1];
+  console.log("click", clickKara);
 
   if ("adot" in currentAction && currentAction.adot.length != 0){
+    console.log("add dot");
     for(const dot of currentAction.adot){
+      console.log(dot);
       addPointToSvg(dot.x, dot.y, dot.c);
     }
   } 
   if ("rdot" in currentAction && currentAction.rdot.length != 0) {
+    console.log("remove dot");
     const dots = document.getElementsByTagName("circle");
     for(const irdot of currentAction.rdot){
       for(const dot of dots){
         if(Number(dot.getAttribute('x')) === irdot.x && Number(dot.getAttribute('y')) === irdot.y){
+          console.log(dot);
           dot.remove();
         }
       }
     }
   }
   if ("aline" in currentAction && currentAction.aline.length != 0){
+    console.log("add line");
     for(const line of currentAction.aline){
+      console.log(line);
       addLineToSvg(line.x1, line.y1, line.x2, line.y2, line.c);
     }
   } 
   if ("rline" in currentAction && currentAction.rline.length != 0) {
+    console.log("remove line");
     const lines = document.getElementsByTagName("line");
     for(const irline of currentAction.rline){
       for(const line of lines){
         if(Number(line.getAttribute('x1')) === irline.x1 && Number(line.getAttribute('y1')) === irline.y1 && Number(line.getAttribute('x2')) === irline.x2 && Number(line.getAttribute('y2')) === irline.y2){
+          console.log(line);
           line.remove();
         }
       }
     }
   }
   if ("cdot" in currentAction && currentAction.cdot.length != 0) {
+    console.log("change class dot");
     const dots = document.getElementsByTagName("circle");
     for(const icdot of currentAction.cdot){
       for(const dot of dots){
         if(Number(dot.getAttribute('x')) === icdot.x && Number(dot.getAttribute('y')) === icdot.y){
+          console.log(dot);
           dot.setAttribute("class", icdot.c);
         }
       }

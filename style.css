@@ -119,18 +119,27 @@ h1 {
 }
 
 /* Add animation for dashed lines */
-.dashed-line {
-  z-index: 3;
-  position: absolute;
-  stroke: teal;
+line {
   stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
   stroke-dashoffset: 1000; /* Initially hide the dashed line */
   animation: drawLine 0.4s ease forwards; /* Apply the animation */
 }
+.dashed-line {
+  stroke: teal;
+}
+
+.divider {
+  stroke: whitesmoke;
+  stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
+  stroke-dashoffset: 1000; /* Initially hide the dashed line */
+  animation: drawLine 0.4s ease forwards; /* Apply the animation */
+}
+.medianx {
+  stroke: teal;
+}
 
 .solid-line {
   /* Set the stroke color */
-  
   stroke-width: 2.5; /* Set the stroke width */
   animation: drawLine 0.4s ease forwards;
 }
