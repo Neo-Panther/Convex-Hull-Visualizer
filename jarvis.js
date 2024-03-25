@@ -8,19 +8,8 @@ svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
 const ACTIONS = [];
-/**
- * Action object
- * adot : {x: number, y: number, c: class}[]  // add these dots
- * rdot : {x: number, y: number, c: class}[]  // remove these dots
- * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // add these lines
- * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines
- * cdot : {x: number, y: number, c: class}[]  // change dot class
- * cline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // change line class
- * default class: solid black
-*/
 let clickKara = 0;
 let svgClickListener = null; // Variable to store the click listener
-
 
 // Add a point to the SVG
 function addPointToSvg(event) {
@@ -54,6 +43,7 @@ function toggleSvgClickListener(enable) {
 if (clickKara === 0) {
   toggleSvgClickListener(true);
 }
+
 document.getElementById("next-button").addEventListener("click", function () {
   clickKara = 1;
   // Disable further inputs
@@ -71,12 +61,13 @@ document.getElementById("next-button").addEventListener("click", function () {
     });
     convexHull.push(points[0]);
   }
-  
+
   if (currentStep === "drawLines") {
     console.log(points);
     const leftmost = convexHull[convexHull.length - 1];
+    const lastPoint = convexHull[convexHull.length - 2];
     for (let i = 0; i < points.length; i++) {
-      if (points[i] === leftmost) continue;
+      if (points[i] === leftmost || points[i] === lastPoint) continue;
       const line = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "line"
@@ -91,6 +82,7 @@ document.getElementById("next-button").addEventListener("click", function () {
       svg.appendChild(line);
     }
     currentStep = "addLines";
+    document.getElementById("prev-button").disabled = true; // Disable previous button
   } else if (currentStep === "addLines") {
     // Remove previously drawn dashed lines
     const dashedLines = svg.querySelectorAll("line[stroke-dasharray]");
@@ -128,8 +120,14 @@ document.getElementById("next-button").addEventListener("click", function () {
       line.setAttribute("class", "solid-line"); // Add class for animation
       svg.appendChild(line);
     }
-    console.log("x:" + convexHull[convexHull.length - 2].x + ":y:" + convexHull[convexHull.length - 2].y);
+    console.log(
+      "x:" +
+        convexHull[convexHull.length - 2].x +
+        ":y:" +
+        convexHull[convexHull.length - 2].y
+    );
     currentStep = "drawLines";
+    document.getElementById("prev-button").disabled = false; // Re-enable previous button
   }
 });
 

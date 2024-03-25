@@ -1,6 +1,6 @@
 /* CSS code */
 body {
-  background-color: #0F0F0F;
+  background-color: #0f0f0f;
   color: #fff;
   font-family: Arial, sans-serif;
   margin: 0;
@@ -8,7 +8,7 @@ body {
 }
 
 header {
-  background-color: #232D3F;
+  background-color: #232d3f;
   padding: 20px;
   text-align: center;
 }
@@ -38,7 +38,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #0F0F0F;
+  background-color: #0f0f0f;
   padding: 10px;
   border-radius: 10px;
   content: max-content;
@@ -46,7 +46,7 @@ h1 {
 
 #prev-button,
 #next-button {
-  background-color: #232D3F;
+  background-color: #232d3f;
   border: none;
   color: #fff;
   padding: 10px 20px;
@@ -54,22 +54,21 @@ h1 {
   transition: background-color 0.3s;
   border-radius: 10%;
   width: 140px;
-  transition:0.8 ease-in-out;
+  transition: 0.8 ease-in-out;
 }
 #next-button:hover {
-  background-color: #005B41;
-  scale: 1.1
+  background-color: #005b41;
+  scale: 1.1;
 }
 
 #page1-button:hover,
-#page2-button:hover{
+#page2-button:hover {
   background-color: gray;
-  scale: 1.1
+  scale: 1.1;
 }
 #prev-button:hover {
-  background-color: #005B41;
-  scale: 1.1
-
+  background-color: #005b41;
+  scale: 1.1;
 }
 .text-container {
   flex-grow: 1;
@@ -123,12 +122,14 @@ h1 {
 .dashed-line {
   stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
   stroke-dashoffset: 1000; /* Initially hide the dashed line */
-  animation: drawLine 1s ease forwards; /* Apply the animation */
+  animation: drawLine 0.4s ease forwards; /* Apply the animation */
 }
 
-.solid-line { /* Set the stroke color */
+.solid-line {
+  /* Set the stroke color */
+
   stroke-width: 2.5; /* Set the stroke width */
-  animation: drawLine 1s ease forwards;
+  animation: drawLine 0.4s ease forwards;
 }
 
 /* Add animation for points */
