@@ -19,7 +19,10 @@ const ACTIONS = [];
  * default class: solid black
 */
 let clickKara = 0;
-let svgClickListener = null;
+let svgClickListener = null; // Variable to store the click listener
+
+
+// Add a point to the SVG
 function addPointToSvg(event) {
   const x = event.clientX,
     y = event.clientY;
@@ -35,6 +38,8 @@ function addPointToSvg(event) {
   points.push({ x: x - offx, y: y - offy });
   console.log("x-cor" + x + "y-cor" + y);
 }
+
+// Function to enable or disable the SVG click listener
 function toggleSvgClickListener(enable) {
   if (enable) {
     svgClickListener = function (event) {
@@ -49,9 +54,9 @@ function toggleSvgClickListener(enable) {
 if (clickKara === 0) {
   toggleSvgClickListener(true);
 }
-var done = 0;
 document.getElementById("next-button").addEventListener("click", function () {
   clickKara = 1;
+  // Disable further inputs
   toggleSvgClickListener(false);
 
   if (points.length < 3) {
@@ -60,6 +65,7 @@ document.getElementById("next-button").addEventListener("click", function () {
   }
 
   if (convexHull.length === 0) {
+    // Sort the points by x and then y coordinate
     points.sort(function (a, b) {
       return a.x - b.x || b.y - a.y;
     });
@@ -68,13 +74,6 @@ document.getElementById("next-button").addEventListener("click", function () {
   
   if (currentStep === "drawLines") {
     console.log(points);
-    if(!done){
-      const ans = kps(points);
-      for(const point of ans){
-        console.log(point.x, point.y);
-      }
-      done = 1;
-    }
     const leftmost = convexHull[convexHull.length - 1];
     for (let i = 0; i < points.length; i++) {
       if (points[i] === leftmost) continue;
@@ -84,16 +83,14 @@ document.getElementById("next-button").addEventListener("click", function () {
       );
       line.setAttribute("x1", leftmost.x);
       line.setAttribute("y1", leftmost.y);
-
       line.setAttribute("x2", points[i].x);
       line.setAttribute("y2", points[i].y);
       line.setAttribute("stroke", "teal");
       line.setAttribute("stroke-dasharray", "10,10");
-      line.setAttribute("class", "line");
+      line.setAttribute("class", "dashed-line"); // Add class for animation
       svg.appendChild(line);
     }
     currentStep = "addLines";
-    document.getElementById("prev-button").disabled = true; // Disable previous button
   } else if (currentStep === "addLines") {
     // Remove previously drawn dashed lines
     const dashedLines = svg.querySelectorAll("line[stroke-dasharray]");
@@ -114,7 +111,9 @@ document.getElementById("next-button").addEventListener("click", function () {
       }
     }
     convexHull.push(nextPoint);
+    // Add the action to history
     actionHistory.push({ action: "next", point: nextPoint });
+    // Draw the convex hull
     if (convexHull.length >= 2) {
       const line = document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -124,20 +123,13 @@ document.getElementById("next-button").addEventListener("click", function () {
       line.setAttribute("y1", convexHull[convexHull.length - 2].y);
       line.setAttribute("x2", convexHull[convexHull.length - 1].x);
       line.setAttribute("y2", convexHull[convexHull.length - 1].y);
-      console.log(
-        "x-coordinate of the start - " +
-          convexHull[convexHull.length - 1].x +
-          " y-coordinate of the start -" +
-          convexHull[convexHull.length - 1].y
-      );
-      line.setAttribute("stroke", "red");
+      line.setAttribute("stroke", "white");
       line.setAttribute("stroke-width", "2.5");
       line.setAttribute("class", "solid-line"); // Add class for animation
       svg.appendChild(line);
     }
     console.log("x:" + convexHull[convexHull.length - 2].x + ":y:" + convexHull[convexHull.length - 2].y);
     currentStep = "drawLines";
-    document.getElementById("prev-button").disabled = false; // Re-enable previous button
   }
 });
 
