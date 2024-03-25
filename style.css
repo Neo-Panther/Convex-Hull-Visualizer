@@ -30,8 +30,8 @@ h1 {
   height: 400px;
   border: 2px solid #444;
   margin-bottom: 20px;
-  
- /* Added to create space between SVG and buttons */
+
+  /* Added to create space between SVG and buttons */
 }
 
 .guide-container {
@@ -41,6 +41,7 @@ h1 {
   background-color: #0F0F0F;
   padding: 10px;
   border-radius: 10px;
+  content: max-content;
 }
 
 #prev-button,
@@ -52,26 +53,9 @@ h1 {
   cursor: pointer;
   transition: background-color 0.3s;
   border-radius: 10%;
-  width: 130px;
-  transition-property: scale;
-  transition-duration: 0.5s;
+  width: 140px;
+  transition:0.8 ease-in-out;
 }
-
-#page1-button,
-#page2-button{
-  background-color: #232d3f;
-  border: none;
-  color: #fff;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  border-radius: 10%;
-  width: 150px;
-  transition-property: scale;
-  transition-duration: 0.5s;
-}
-
-
 #next-button:hover {
   background-color: #005B41;
   scale: 1.1
