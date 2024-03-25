@@ -18,10 +18,6 @@ const ACTIONS = [];
  * cline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // change line class
  * default class: solid black
 */
-let clickKara = 0;
-let svgClickListener = null; // Variable to store the click listener
-
-// JavaScript code
 
 function getSlope(point1, point2){
   return (point1.y-point2.y)/(point2.x-point1.x);
@@ -458,6 +454,7 @@ function toggleSvgClickListener(enable) {
 if (clickKara === 0) {
   toggleSvgClickListener(true);
 }
+
 var done = 0;
 document.getElementById("next-button").addEventListener("click", function () {
   clickKara = 1;
@@ -544,23 +541,3 @@ document.getElementById("next-button").addEventListener("click", function () {
     currentStep = "drawLines";
   }
 });
-
-document.getElementById("prev-button").addEventListener("click", function () {
-  if (actionHistory.length === 0) {
-    alert("No previous actions to undo.");
-    return;
-  }
-  const lastAction = actionHistory.pop();
-  if (lastAction.action === "next") {
-    svg.removeChild(svg.lastChild);
-    convexHull.pop();
-  }
-});
-
-function crossProduct(p1, p2, p3) {
-  return (p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y);
-}
-
-function distance(p1, p2) {
-  return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
-}
