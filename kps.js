@@ -3,7 +3,6 @@ let convexHull = [];
 let actionHistory = []; // Array to store the history of actions
 let currentStep = "drawLines"; // Track the current step of the algorithm
 const svg_container = document.getElementsByClassName("svg-container")[0];
-const off = svg_container.getBoundingClientRect();
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 const nxtbtn = document.getElementById("next-button");
 svg_container.appendChild(svg);
@@ -490,41 +489,37 @@ function getSupportingLine(medianSlope, intercept) {
 
 // Add a point to the SVG
 function addPointToSvg(x, y, c) {
-  var offx = off.left;
-  var offy = off.top;
   const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-  dot.setAttribute("cx", x - offx);
-  dot.setAttribute("cy", y - offy);
-  dot.setAttribute("r", 5);
-  dot.setAttribute("class", "dot");
-  if(c) dot.classList.add(c);
+  dot.setAttribute("cx", x);
+  dot.setAttribute("cy", y);
+  if(c) dot.setAttribute("class", c);
   svg.appendChild(dot);
-  points.push({ x: x - offx, y: y - offy });
-  console.log("x-cor" + x + "y-cor" + y);
 }
 
 function addLineToSvg(x1, y1, x2, y2, c){
   const line = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "line"
-  );
+    );
   line.setAttribute("x1", x1);
   line.setAttribute("y1", y1);
   line.setAttribute("x2", x2);
   line.setAttribute("y2", y2);
-  if(!c)
-    line.setAttribute("class", "dashed-line"); // Add class for animation
-  else
-    line.setAttribute("class", c);
+  if(c)  line.classList.add(c);
   svg.appendChild(line);
 }
-
+  
 svg.addEventListener("click", function(event) {
   if(svg.classList.contains("disabled")){
     alert("Cannot add point while algorithm is running.");
     return;
   }
-  addPointToSvg(event.clientX, event.clientY, "");
+  const off = svg_container.getBoundingClientRect();
+  points.push({ x: event.clientX - off.left, y: event.clientY - off.top });
+  if(points.length > 2 && nxtbtn.classList.contains("disabled")){
+    nxtbtn.classList.remove("disabled");
+  }
+  addPointToSvg(event.clientX - off.left, event.clientY - off.top, "");
 })
 
 
@@ -532,9 +527,10 @@ nxtbtn.addEventListener("click", function () {
   if(nxtbtn.classList.contains("disabled")){
     alert("Please add at least three points by clicking on the SVG.");
     return;
+  } else {
+    // Disable further inputs
+    svg.classList.add("disabled");
   }
-  // Disable further inputs
-  svg.classList.add("disabled");
 
   clickKara += 1;
   if(clickKara === 1){
@@ -547,8 +543,39 @@ nxtbtn.addEventListener("click", function () {
       addPointToSvg(dot.x, dot.y, dot.c);
     }
   } 
-  if ("rdot" in currentAction && currentAction.adot.length != 0) {
-    const dots = document.getElementsByClassName("dot");
-    
+  if ("rdot" in currentAction && currentAction.rdot.length != 0) {
+    const dots = document.getElementsByTagName("circle");
+    for(const irdot of currentAction.rdot){
+      for(const dot of dots){
+        if(Number(dot.getAttribute('x')) === irdot.x && Number(dot.getAttribute('y')) === irdot.y){
+          dot.remove();
+        }
+      }
+    }
+  }
+  if ("aline" in currentAction && currentAction.aline.length != 0){
+    for(const line of currentAction.aline){
+      addLineToSvg(line.x1, line.y1, line.x2, line.y2, line.c);
+    }
+  } 
+  if ("rline" in currentAction && currentAction.rline.length != 0) {
+    const lines = document.getElementsByTagName("line");
+    for(const irline of currentAction.rline){
+      for(const line of lines){
+        if(Number(line.getAttribute('x1')) === irline.x1 && Number(line.getAttribute('y1')) === irline.y1 && Number(line.getAttribute('x2')) === irline.x2 && Number(line.getAttribute('y2')) === irline.y2){
+          line.remove();
+        }
+      }
+    }
+  }
+  if ("cdot" in currentAction && currentAction.cdot.length != 0) {
+    const dots = document.getElementsByTagName("circle");
+    for(const icdot of currentAction.cdot){
+      for(const dot of dots){
+        if(Number(dot.getAttribute('x')) === icdot.x && Number(dot.getAttribute('y')) === icdot.y){
+          dot.setAttribute("class", icdot.c);
+        }
+      }
+    }
   }
 });

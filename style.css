@@ -96,11 +96,6 @@ h1 {
   }
 }
 
-.dot {
-  fill: rgb(119, 1, 255);
-  stroke: none;
-  r: 7;
-}
 
 /* Add animation for lines */
 @keyframes drawLine {
@@ -130,16 +125,23 @@ h1 {
 
 .solid-line {
   /* Set the stroke color */
-
+  
   stroke-width: 2.5; /* Set the stroke width */
   animation: drawLine 0.4s ease forwards;
 }
+.dot {
+  fill: rgb(119, 1, 255);
+  stroke: none;
+  animation: fadeInOut 0.5s ease forwards;
+  r: 7;
+}
 
 /* Add animation for points */
-.dot {
-  position: absolute;
-  z-index: 1;
+circle {
+  fill: rgb(119, 1, 255);
+  stroke: none;
   animation: fadeInOut 0.5s ease forwards;
+  r: 7;
 }
 
 @keyframes fadeInOut {
