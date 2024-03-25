@@ -11,6 +11,28 @@ const ACTIONS = [];
 let clickKara = 0;
 let svgClickListener = null; // Variable to store the click listener
 
+// Clear button functionality
+document.getElementById("clear-button").addEventListener("click", function () {
+  location.reload(); // Reload the page
+});
+// Random points function
+document
+  .getElementById("add-random-button")
+  .addEventListener("click", function () {
+    const svgContainer = document.querySelector(".svg-container");
+    const svgRect = svgContainer.getBoundingClientRect();
+    const svgWidth = svgRect.width - 100;
+    const svgHeight = svgRect.height - 100;
+    const svgX = svgRect.left + 50;
+    const svgY = svgRect.top + 50;
+
+    for (let i = 0; i < 5; i++) {
+      const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
+      const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
+      addPointToSvg({ clientX: x, clientY: y }); // Call the existing function to add a point to the SVG
+    }
+  });
+
 // Add a point to the SVG
 function addPointToSvg(event) {
   const x = event.clientX,
@@ -65,7 +87,9 @@ document.getElementById("next-button").addEventListener("click", function () {
   if (currentStep === "drawLines") {
     console.log(points);
     const leftmost = convexHull[convexHull.length - 1];
-    const lastPoint = convexHull[convexHull.length - 2];
+    let lastPoint;
+    if (convexHull.length >= 2) lastPoint = convexHull[convexHull.length - 2];
+    else lastPoint = convexHull[convexHull.length - 1];
     for (let i = 0; i < points.length; i++) {
       if (points[i] === leftmost || points[i] === lastPoint) continue;
       const line = document.createElementNS(
