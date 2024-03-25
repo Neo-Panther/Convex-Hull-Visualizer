@@ -3,20 +3,24 @@ let convexHull = [];
 let actionHistory = []; // Array to store the history of actions
 let currentStep = "drawLines"; // Track the current step of the algorithm
 const svg_container = document.getElementsByClassName("svg-container")[0];
+const off = svg_container.getBoundingClientRect();
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+const nxtbtn = document.getElementById("next-button");
 svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
+let clickKara = 0;
 const ACTIONS = [];
 /**
  * Action object
  * adot : {x: number, y: number, c: class}[]  // add these dots
- * rdot : {x: number, y: number, c: class}[]  // remove these dots
+ * rdot : {x: number, y: number}[]  // remove these dots
  * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // add these lines
  * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines
- * cdot : {x: number, y: number, c: class}[]  // change dot class
+ * cdot : {x: number, y: number, c: class, pc: class}[]  // change dot class
  * cline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // change line class
  * default class: solid black
+ * class => string
 */
 
 function getSlope(point1, point2){
@@ -159,11 +163,13 @@ function upper_hull(pmin, pmax, T){
     cdot: [...Tleft.map((point) =>{ return {
       x: point.x,
       y: point.y,
-      c: "left"
+      c: "left",
+      pc: ""
     }}), ...Tright.map((point) => { return {
       x: point.x,
       y: point.y,
-      c: "right"
+      c: "right",
+      pc: ""
     }})],
     rline: [{
       x1: median,
@@ -256,6 +262,8 @@ function upper_hull(pmin, pmax, T){
     cdot: [...Tright.map((point) => { return {
       x: point.x,
       y: point.y,
+      pc: "right",
+      c: ""
     }})],
   })
   console.log("uhull out");
@@ -423,10 +431,7 @@ function getSupportingLine(medianSlope, intercept){
 }
 
 // Add a point to the SVG
-function addPointToSvg(event) {
-  const x = event.clientX,
-    y = event.clientY;
-  const off = svg_container.getBoundingClientRect();
+function addPointToSvg(x, y, c) {
   var offx = off.left;
   var offy = off.top;
   const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -434,110 +439,58 @@ function addPointToSvg(event) {
   dot.setAttribute("cy", y - offy);
   dot.setAttribute("r", 5);
   dot.setAttribute("class", "dot");
+  if(c) dot.classList.add(c);
   svg.appendChild(dot);
   points.push({ x: x - offx, y: y - offy });
   console.log("x-cor" + x + "y-cor" + y);
 }
 
-// Function to enable or disable the SVG click listener
-function toggleSvgClickListener(enable) {
-  if (enable) {
-    svgClickListener = function (event) {
-      addPointToSvg(event);
-    };
-    svg.addEventListener("click", svgClickListener);
-  } else {
-    svg.removeEventListener("click", svgClickListener);
+function addLineToSvg(x1, y1, x2, y2, c){
+  const line = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "line"
+  );
+  line.setAttribute("x1", x1);
+  line.setAttribute("y1", y1);
+  line.setAttribute("x2", x2);
+  line.setAttribute("y2", y2);
+  if(!c)
+    line.setAttribute("class", "dashed-line"); // Add class for animation
+  else
+    line.setAttribute("class", c);
+  svg.appendChild(line);
+}
+
+svg.addEventListener("click", function(event) {
+  if(svg.classList.contains("disabled")){
+    alert("Cannot add point while algorithm is running.");
+    return;
   }
-}
+  addPointToSvg(event.clientX, event.clientY, "");
+})
 
-if (clickKara === 0) {
-  toggleSvgClickListener(true);
-}
 
-var done = 0;
-document.getElementById("next-button").addEventListener("click", function () {
-  clickKara = 1;
-  // Disable further inputs
-  toggleSvgClickListener(false);
-
-  if (points.length < 3) {
+nxtbtn.addEventListener("click", function () {
+  if(nxtbtn.classList.contains("disabled")){
     alert("Please add at least three points by clicking on the SVG.");
     return;
   }
+  // Disable further inputs
+  svg.classList.add("disabled");
 
-  if (convexHull.length === 0) {
-    // Sort the points by x and then y coordinate
-    points.sort(function (a, b) {
-      return a.x - b.x || b.y - a.y;
-    });
-    convexHull.push(points[0]);
+  clickKara += 1;
+  if(clickKara === 1){
+    kps(points);
   }
-  
-  if (currentStep === "drawLines") {
-    console.log(points);
-    if(!done){
-      const ans = kps(points);
-      for(const point of ans){
-        console.log(point.x, point.y);
-      }
-      done = 1;
-    }
-    const leftmost = convexHull[convexHull.length - 1];
-    for (let i = 0; i < points.length; i++) {
-      if (points[i] === leftmost) continue;
-      const line = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "line"
-      );
-      line.setAttribute("x1", leftmost.x);
-      line.setAttribute("y1", leftmost.y);
-      line.setAttribute("x2", points[i].x);
-      line.setAttribute("y2", points[i].y);
-      line.setAttribute("stroke", "teal");
-      line.setAttribute("stroke-dasharray", "10,10");
-      line.setAttribute("class", "dashed-line"); // Add class for animation
-      svg.appendChild(line);
-    }
-    currentStep = "addLines";
-  } else if (currentStep === "addLines") {
-    // Remove previously drawn dashed lines
-    const dashedLines = svg.querySelectorAll("line[stroke-dasharray]");
-    dashedLines.forEach((line) => line.remove());
+  currentAction = ACTIONS[clickKara-1];
 
-    const leftmost = convexHull[convexHull.length - 1];
-    let nextPoint = points[0];
-    for (let i = 1; i < points.length; i++) {
-      if (points[i] === leftmost) continue;
-      let direction = crossProduct(leftmost, nextPoint, points[i]);
-      if (
-        nextPoint === leftmost ||
-        direction > 0 ||
-        (direction === 0 &&
-          distance(leftmost, points[i]) > distance(leftmost, nextPoint))
-      ) {
-        nextPoint = points[i];
-      }
+  if ("adot" in currentAction && currentAction.adot.length != 0){
+    for(const dot of currentAction.adot){
+      addPointToSvg(dot.x, dot.y, dot.c);
     }
-    convexHull.push(nextPoint);
-    // Add the action to history
-    actionHistory.push({ action: "next", point: nextPoint });
-    // Draw the convex hull
-    if (convexHull.length >= 2) {
-      const line = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "line"
-      );
-      line.setAttribute("x1", convexHull[convexHull.length - 2].x);
-      line.setAttribute("y1", convexHull[convexHull.length - 2].y);
-      line.setAttribute("x2", convexHull[convexHull.length - 1].x);
-      line.setAttribute("y2", convexHull[convexHull.length - 1].y);
-      line.setAttribute("stroke", "white");
-      line.setAttribute("stroke-width", "2.5");
-      line.setAttribute("class", "solid-line"); // Add class for animation
-      svg.appendChild(line);
-    }
-    console.log("x:" + convexHull[convexHull.length - 2].x + ":y:" + convexHull[convexHull.length - 2].y);
-    currentStep = "drawLines";
+  } 
+  if ("rdot" in currentAction && currentAction.adot.length != 0) {
+    const dots = document.getElementsByClassName("dot");
+    
   }
 });

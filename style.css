@@ -137,18 +137,25 @@ h1 {
 
 /* Add animation for dashed lines */
 .dashed-line {
+  z-index: 3;
+  position: absolute;
+  stroke: teal;
   stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
   stroke-dashoffset: 1000; /* Initially hide the dashed line */
   animation: drawLine 1s ease forwards; /* Apply the animation */
 }
 
 .solid-line { /* Set the stroke color */
+  position: absolute;
+  z-index: 2;
   stroke-width: 2.5; /* Set the stroke width */
   animation: drawLine 1s ease forwards;
 }
 
 /* Add animation for points */
 .dot {
+  position: absolute;
+  z-index: 1;
   animation: fadeInOut 0.5s ease forwards;
 }
 
