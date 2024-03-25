@@ -45,7 +45,9 @@ h1 {
 }
 
 #prev-button,
-#next-button {
+#next-button,
+#clear-button,
+#add-random-button {
   background-color: #232d3f;
   border: none;
   color: #fff;
@@ -53,10 +55,13 @@ h1 {
   cursor: pointer;
   transition: background-color 0.3s;
   border-radius: 10%;
-  width: 140px;
+  width: 160px;
   transition: 0.8 ease-in-out;
+  /* margin-right: 50px; */
 }
-#next-button:hover {
+#next-button:hover,
+#clear-button:hover,
+#add-random-button:hover {
   background-color: #005b41;
   scale: 1.1;
 }

@@ -11,6 +11,10 @@ svg.setAttribute("height", "100%");
 const ACTIONS = [];
 var clickKara = 0;
 
+
+
+
+
 /**
  * Action object
  * adot : {x: number, y: number, c: class}[]  // add these dots
