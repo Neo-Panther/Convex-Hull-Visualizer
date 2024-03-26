@@ -12,7 +12,7 @@ svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
 const ACTIONS = [];
 var clickKara = 0;
-
+const textc = document.getElementById('text-container-left');
 /**
  * Action object
  * adot : {x: number, y: number, c: class}[]  // add these dots
@@ -592,6 +592,7 @@ nxtbtn.addEventListener("click", function() {
     svg.classList.add("running");
     arandom.classList.add("disabled");
     document.getElementById("prev-button").disabled = false;
+    prevbtn.classList.add("disabled");
 
     console.log("kps answer");
     console.log(...kps(points));
@@ -604,7 +605,7 @@ nxtbtn.addEventListener("click", function() {
     return;
   }
   currentAction = ACTIONS[clickKara-1];
-  // element.innerHTML = currentAction.instr;
+  textc.innerHTML = currentAction.instr;
   console.log("click", clickKara);
 
   if ("adot" in currentAction && currentAction.adot.length != 0){
@@ -690,7 +691,7 @@ prevbtn.addEventListener("click", function() {
     prevbtn.classList.add("disabled");
   }
   const currentAction = ACTIONS[clickKara];
-  
+  textc.innerHTML = currentAction.instr;
   if ("rdot" in currentAction && currentAction.rdot.length != 0){
     for(const dot of currentAction.rdot){
       if(dot.y < 0) dot.y *= -1;

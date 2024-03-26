@@ -25,7 +25,7 @@ h1 {
   height: calc(100vh - 80px); /* Adjust based on your header height */
 }
 
-.text-container-left {
+#text-container-left {
   width: 20%; /* Adjust this value as needed */
   word-wrap: break-word;
 }
