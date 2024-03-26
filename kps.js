@@ -567,7 +567,8 @@ function addLineToSvg(x1, y1, x2, y2, c){
   svg.appendChild(line);
   console.log("element=", line);
 }
-  
+document.getElementById("next-button").disabled = true;
+document.getElementById("prev-button").disabled = true;
 svg.addEventListener("click", function(event) {
   if(svg.classList.contains("running")){
     alert("Cannot add point while algorithm is running.");
@@ -576,7 +577,7 @@ svg.addEventListener("click", function(event) {
   const off = svg_container.getBoundingClientRect();
   points.push({ x: event.clientX - off.left, y: event.clientY - off.top });
   if(points.length === 3){
-    nxtbtn.classList.remove("disabled");
+    document.getElementById("next-button").disabled = false;
   }
   addPointToSvg(event.clientX - off.left, event.clientY - off.top, "");
 });
@@ -590,7 +591,7 @@ nxtbtn.addEventListener("click", function() {
     // Disable further inputs
     svg.classList.add("running");
     arandom.classList.add("disabled");
-    prevbtn.classList.remove("disabled");
+    document.getElementById("prev-button").disabled = false;
 
     console.log("kps answer");
     console.log(...kps(points));

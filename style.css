@@ -75,7 +75,8 @@ h1 {
   scale: 1.1;
 }
 
-#prev-button:disabled {
+#prev-button:disabled,
+#next-button:disabled {
   background-color: rgb(39, 39, 39); /* Light gray */
   color: #666666; /* Dark gray */
   cursor: not-allowed;
