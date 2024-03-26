@@ -30,7 +30,7 @@ document.getElementById("clear-button").addEventListener("click", function () {
 });
 // Random points function
 arandom.addEventListener("click", function () {
-  if(arandom.classList.contains("running")){
+  if(arandom.classList.contains("disabled")){
     alert("Cannot add points while algorithm is running.");
     return;
   }
@@ -444,6 +444,13 @@ function upper_bridge(S, L) {
   if (pk.x < L && pm.x >= L) {
     ACTIONS.push({
       rline: [
+        {
+          x1: pairs[Math.floor(slopes.length / 2)][0].x,
+          x2: pairs[Math.floor(slopes.length / 2)][1].x,
+          y1: pairs[Math.floor(slopes.length / 2)][0].y,
+          y2: pairs[Math.floor(slopes.length / 2)][1].y,
+          c: "median-slope",
+        },
         supportl,
         ...pairs.map((pair) => {
           return {
@@ -582,6 +589,7 @@ nxtbtn.addEventListener("click", function() {
   } else if(clickKara === 0) {
     // Disable further inputs
     svg.classList.add("running");
+    arandom.classList.add("disabled");
     prevbtn.classList.remove("disabled");
 
     console.log("kps answer");
