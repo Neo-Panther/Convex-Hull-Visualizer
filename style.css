@@ -47,7 +47,8 @@ h1 {
 #prev-button,
 #next-button,
 #clear-button,
-#add-random-button {
+#add-random-button,
+#skip-steps {
   background-color: #232d3f;
   border: none;
   color: #fff;
@@ -61,7 +62,9 @@ h1 {
 }
 #next-button:hover,
 #clear-button:hover,
-#add-random-button:hover {
+#add-random-button:hover,
+#skip-steps:hover,
+#prev-button:hover {
   background-color: #005b41;
   scale: 1.1;
 }
@@ -69,10 +72,6 @@ h1 {
 #page1-button:hover,
 #page2-button:hover {
   background-color: gray;
-  scale: 1.1;
-}
-#prev-button:hover {
-  background-color: #005b41;
   scale: 1.1;
 }
 .text-container {
@@ -108,7 +107,8 @@ h1 {
   }
 }
 /* Add animation for points */
-circle {
+circle,
+.dot {
   fill: rgb(119, 1, 255);
   stroke: none;
   animation: fadeInOut 0.5s ease forwards;

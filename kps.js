@@ -6,6 +6,7 @@ const svg_container = document.getElementsByClassName("svg-container")[0];
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 const nxtbtn = document.getElementById("next-button");
 const prevbtn = document.getElementById("prev-button");
+const arandom = document.getElementById("add-random-button");
 svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
@@ -28,19 +29,32 @@ document.getElementById("clear-button").addEventListener("click", function () {
   location.reload(); // Reload the page
 });
 // Random points function
-document.getElementById("add-random-button").addEventListener("click", function () {
-    const svgWidth = svg.width.animVal.value - 100;
-    const svgHeight = svg.height.animVal.value - 100;
-    const svgX = 50;
-    const svgY = 50;
+arandom.addEventListener("click", function () {
+  if(arandom.classList.contains("running")){
+    alert("Cannot add points while algorithm is running.");
+    return;
+  }
+  const svgWidth = svg.width.animVal.value - 100;
+  const svgHeight = svg.height.animVal.value - 100;
+  const svgX = 50;
+  const svgY = 50;
 
-    for (let i = 0; i < 5; i++) {
-      const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
-      const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
-      addPointToSvg(x, y); // Call the existing function to add a point to the SVG
-      points.push({ x: x, y: y });
-    }
-  });
+  for (let i = 0; i < 5; i++) {
+    const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
+    const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
+    addPointToSvg(x, y); // Call the existing function to add a point to the SVG
+    points.push({ x: x, y: y });
+  }
+});
+// Skip steps for faster completion
+document.getElementById("skip-steps").addEventListener("click", function(){
+  if(nxtbtn.classList.contains("disabled")){
+    alert(msg);
+    return;
+  }
+  for(var i = 0; i < 5; i++)
+    nxtbtn.click();
+});
 
 function getSlope(point1, point2) {
   return (point1.y - point2.y) / (point2.x - point1.x);
@@ -569,6 +583,7 @@ nxtbtn.addEventListener("click", function() {
     // Disable further inputs
     svg.classList.add("running");
     prevbtn.classList.remove("disabled");
+
     console.log("kps answer");
     console.log(...kps(points));
   }
@@ -659,6 +674,7 @@ prevbtn.addEventListener("click", function() {
     alert("No previous step to go to");
     return;
   }
+  if(nxtbtn.classList.contains("disabled")) nxtbtn.classList.remove("disabled");
   clickKara-=1;
   if(clickKara===0){
     prevbtn.classList.add("disabled");
