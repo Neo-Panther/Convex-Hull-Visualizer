@@ -29,7 +29,7 @@ h1 {
 
 #text-container-left {
   position: relative;
-  top: 20%;
+  top: 13%;
   width: 20%; /* Adjust this value as needed */
   word-wrap: break-word;
   text-align: center;
@@ -43,12 +43,13 @@ h1 {
   position: relative;
   top: 10%;
   width: 70%; /* Adjust this value as needed */
-  height: 400px;
+  height: 60%;
   border: 2px solid #444;
   margin-bottom: 20px;
 }
 
 .guide-container {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
