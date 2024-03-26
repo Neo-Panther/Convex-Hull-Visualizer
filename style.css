@@ -86,11 +86,7 @@ h1 {
 }
 
 /* CSS code */
-/* CSS code */
-.hull-point {
-  fill: red; /* Change the color to your desired color */
-  stroke: none;
-}
+/* Classes for all points*/
 
 @keyframes scalePoint {
   from {
@@ -100,7 +96,33 @@ h1 {
     transform: scale(1);
   }
 }
-
+@keyframes fadeInOut {
+  0% {
+    opacity: 0; /* Start with fully transparent */
+  }
+  30% {
+    opacity: 0.5; /* Fade in halfway through */
+  }
+  100% {
+    opacity: 1; /* Fade out at the end */
+  }
+}
+/* Add animation for points */
+circle {
+  fill: rgb(119, 1, 255);
+  stroke: none;
+  animation: fadeInOut 0.5s ease forwards;
+  r: 7;
+}
+.hull-point {
+  fill: red; /* Change the color to your desired color */
+}
+.left{
+  fill: green;
+}
+.right{
+  fill: pink;
+}
 
 /* Add animation for lines */
 @keyframes drawLine {
@@ -118,54 +140,48 @@ h1 {
   }
 }
 
-/* Add animation for dashed lines */
+/* Classes for all lines*/
 line {
-  stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
-  stroke-dashoffset: 1000; /* Initially hide the dashed line */
   animation: drawLine 0.4s ease forwards; /* Apply the animation */
 }
 .dashed-line {
-  stroke: teal;
-}
-
-.divider {
-  stroke: whitesmoke;
   stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
   stroke-dashoffset: 1000; /* Initially hide the dashed line */
-  animation: drawLine 0.4s ease forwards; /* Apply the animation */
-}
-.medianx {
   stroke: teal;
 }
-
+.divider {
+  stroke: white;
+  stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
+  stroke-dashoffset: 1000; /* Initially hide the dashed line */
+}
+.medianx {
+  stroke: pink;
+  stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
+  stroke-dashoffset: 1000; /* Initially hide the dashed line */
+}
 .solid-line {
   /* Set the stroke color */
   stroke-width: 2.5; /* Set the stroke width */
   animation: drawLine 0.4s ease forwards;
 }
-.dot {
-  fill: rgb(119, 1, 255);
-  stroke: none;
-  animation: fadeInOut 0.5s ease forwards;
-  r: 7;
+.random-pair-line{
+  stroke: yellow;
+  animation: drawLine 0.4s ease forwards;
 }
-
-/* Add animation for points */
-circle {
-  fill: rgb(119, 1, 255);
-  stroke: none;
-  animation: fadeInOut 0.5s ease forwards;
-  r: 7;
+.median-slope{
+  stroke: green;
 }
-
-@keyframes fadeInOut {
-  0% {
-    opacity: 0; /* Start with fully transparent */
-  }
-  30% {
-    opacity: 0.5; /* Fade in halfway through */
-  }
-  100% {
-    opacity: 1; /* Fade out at the end */
-  }
+.support{
+  stroke: violet;
+  stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
+}
+.hull {
+  /* Set the stroke color */
+  stroke: red;
+  stroke-width: 2.5; /* Set the stroke width */
+  animation: drawLine 0.4s ease forwards;
+}
+.trapezium{
+  stroke: yellow;
+  stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
 }
