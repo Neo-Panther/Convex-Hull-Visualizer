@@ -592,7 +592,7 @@ nxtbtn.addEventListener("click", function() {
     svg.classList.add("running");
     arandom.classList.add("disabled");
     document.getElementById("prev-button").disabled = false;
-    prevbtn.classList.add("disabled");
+    prevbtn.classList.remove("disabled");
 
     console.log("kps answer");
     console.log(...kps(points));
