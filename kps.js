@@ -30,7 +30,7 @@ document.getElementById("clear-button").addEventListener("click", function () {
 });
 // Random points function
 arandom.addEventListener("click", function () {
-  if(arandom.classList.contains("running")){
+  if(arandom.classList.contains("disabled")){
     alert("Cannot add points while algorithm is running.");
     return;
   }
@@ -444,6 +444,13 @@ function upper_bridge(S, L) {
   if (pk.x < L && pm.x >= L) {
     ACTIONS.push({
       rline: [
+        {
+          x1: pairs[Math.floor(slopes.length / 2)][0].x,
+          x2: pairs[Math.floor(slopes.length / 2)][1].x,
+          y1: pairs[Math.floor(slopes.length / 2)][0].y,
+          y2: pairs[Math.floor(slopes.length / 2)][1].y,
+          c: "median-slope",
+        },
         supportl,
         ...pairs.map((pair) => {
           return {
@@ -560,7 +567,8 @@ function addLineToSvg(x1, y1, x2, y2, c){
   svg.appendChild(line);
   console.log("element=", line);
 }
-  
+document.getElementById("next-button").disabled = true;
+document.getElementById("prev-button").disabled = true;
 svg.addEventListener("click", function(event) {
   if(svg.classList.contains("running")){
     alert("Cannot add point while algorithm is running.");
@@ -569,7 +577,7 @@ svg.addEventListener("click", function(event) {
   const off = svg_container.getBoundingClientRect();
   points.push({ x: event.clientX - off.left, y: event.clientY - off.top });
   if(points.length === 3){
-    nxtbtn.classList.remove("disabled");
+    document.getElementById("next-button").disabled = false;
   }
   addPointToSvg(event.clientX - off.left, event.clientY - off.top, "");
 });
@@ -582,7 +590,8 @@ nxtbtn.addEventListener("click", function() {
   } else if(clickKara === 0) {
     // Disable further inputs
     svg.classList.add("running");
-    prevbtn.classList.remove("disabled");
+    arandom.classList.add("disabled");
+    document.getElementById("prev-button").disabled = false;
 
     console.log("kps answer");
     console.log(...kps(points));
