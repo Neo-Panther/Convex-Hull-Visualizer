@@ -7,6 +7,7 @@ const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 const nxtbtn = document.getElementById("next-button");
 const prevbtn = document.getElementById("prev-button");
 const arandom = document.getElementById("add-random-button");
+const skipbtn = document.getElementById("skip-steps");
 svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
@@ -14,7 +15,7 @@ const ACTIONS = [];
 var clickKara = 0;
 const textc = document.getElementById('text-container-left');
 /**
- * Action object
+ * Action object [{}]
  * adot : {x: number, y: number, c: class}[]  // add these dots
  * rdot : {x: number, y: number}[]  // remove these dots
  * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // add these lines
@@ -30,10 +31,12 @@ document.getElementById("clear-button").addEventListener("click", function () {
 });
 // Random points function
 arandom.addEventListener("click", function () {
-  if(arandom.classList.contains("disabled")){
+  if(arandom.disabled){
     alert("Cannot add points while algorithm is running.");
     return;
   }
+  skipbtn.disabled = false;
+  nxtbtn.disabled = false;
   const svgWidth = svg.width.animVal.value - 100;
   const svgHeight = svg.height.animVal.value - 100;
   const svgX = 50;
@@ -47,8 +50,8 @@ arandom.addEventListener("click", function () {
   }
 });
 // Skip steps for faster completion
-document.getElementById("skip-steps").addEventListener("click", function(){
-  if(nxtbtn.classList.contains("disabled")){
+skipbtn.addEventListener("click", function(){
+  if(nxtbtn.disabled){
     alert(msg);
     return;
   }
@@ -567,8 +570,7 @@ function addLineToSvg(x1, y1, x2, y2, c){
   svg.appendChild(line);
   console.log("element=", line);
 }
-document.getElementById("next-button").disabled = true;
-document.getElementById("prev-button").disabled = true;
+
 svg.addEventListener("click", function(event) {
   if(svg.classList.contains("running")){
     alert("Cannot add point while algorithm is running.");
@@ -577,29 +579,30 @@ svg.addEventListener("click", function(event) {
   const off = svg_container.getBoundingClientRect();
   points.push({ x: event.clientX - off.left, y: event.clientY - off.top });
   if(points.length === 3){
-    document.getElementById("next-button").disabled = false;
+    nxtbtn.disabled = false;
+    skipbtn.disabled = false;
   }
   addPointToSvg(event.clientX - off.left, event.clientY - off.top, "");
 });
 
 var msg = "Please add at least three points by clicking on the SVG.";
 nxtbtn.addEventListener("click", function() {
-  if(nxtbtn.classList.contains("disabled")){
+  if(nxtbtn.disabled){
     alert(msg);
     return;
   } else if(clickKara === 0) {
     // Disable further inputs
     svg.classList.add("running");
-    arandom.classList.add("disabled");
-    document.getElementById("prev-button").disabled = false;
-    prevbtn.classList.remove("disabled");
+    arandom.disabled = true;
+    prevbtn.disabled = false;
 
     console.log("kps answer");
     console.log(...kps(points));
   }
   clickKara += 1;
   if(clickKara > ACTIONS.length){
-    nxtbtn.classList.add("disabled");
+    nxtbtn.disabled = true;
+    skipbtn.disabled = true;
     msg = "Algorithm is finished, clear points or reload to restart";
     clickKara -= 1;
     return;
@@ -681,17 +684,24 @@ nxtbtn.addEventListener("click", function() {
 });
 
 prevbtn.addEventListener("click", function() {
-  if(prevbtn.classList.contains("disabled")){
+  if(prevbtn.disabled){
     alert("No previous step to go to");
     return;
   }
-  if(nxtbtn.classList.contains("disabled")) nxtbtn.classList.remove("disabled");
-  clickKara-=1;
-  if(clickKara===0){
-    prevbtn.classList.add("disabled");
+  if(nxtbtn.disabled) {
+    skipbtn.disabled = false;
+    nxtbtn.disabled = false;
   }
+  clickKara-=1;
   const currentAction = ACTIONS[clickKara];
-  textc.innerHTML = currentAction.instr;
+  if(clickKara===0){
+    prevbtn.disabled = true;
+    arandom.disabled = false;
+    svg.classList.remove("running");
+    textc.innerHTML = "Add points by tapping in the box";
+  } else {
+    textc.innerHTML = currentAction.instr;
+  }
   if ("rdot" in currentAction && currentAction.rdot.length != 0){
     for(const dot of currentAction.rdot){
       if(dot.y < 0) dot.y *= -1;
@@ -761,5 +771,8 @@ prevbtn.addEventListener("click", function() {
         }
       }
     }
+  }
+  if(clickKara===0){
+    ACTIONS.length = 0;
   }
 });
