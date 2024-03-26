@@ -16,6 +16,7 @@
         overflow: hidden;
         border: 1px solid #008170;
         background-color: #005b41;
+        width: 100%;
       }
 
       /* Tab links */
@@ -58,11 +59,14 @@
   </head>
   <body scrolling="no">
     <div class="tab">
-      <button class="tablinks" onclick="openTab(event, 'page1')" id="defaultOpen">KPS</button>
       <button
         class="tablinks"
-        onclick="openTab(event, 'page2')"
+        onclick="openTab(event, 'page1')"
+        id="defaultOpen"
       >
+        KPS
+      </button>
+      <button class="tablinks" onclick="openTab(event, 'page2')">
         Jarvis March
       </button>
       <button class="tablinks" onclick="openTab(event, 'page3')">About</button>
