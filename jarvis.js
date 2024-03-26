@@ -10,22 +10,23 @@ svg.setAttribute("height", "100%");
 const ACTIONS = [];
 let clickKara = 0;
 let svgClickListener = null; // Variable to store the click listener
+const arandom = document.getElementById("add-random-button");
+const nxtbtn = document.getElementById("next-button");
+const prevbtn = document.getElementById("prev-button");
 
 // Clear button functionality
 document.getElementById("clear-button").addEventListener("click", function () {
   location.reload(); // Reload the page
 });
 // Random points function
-document
-  .getElementById("add-random-button")
-  .addEventListener("click", function () {
+arandom.addEventListener("click", function () {
     const svgContainer = document.querySelector(".svg-container");
     const svgRect = svgContainer.getBoundingClientRect();
     const svgWidth = svgRect.width - 100;
     const svgHeight = svgRect.height - 100;
     const svgX = svgRect.left + 50;
     const svgY = svgRect.top + 50;
-
+    nxtbtn.disabled = false;
     for (let i = 0; i < 5; i++) {
       const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
       const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
@@ -55,6 +56,9 @@ function toggleSvgClickListener(enable) {
   if (enable) {
     svgClickListener = function (event) {
       addPointToSvg(event);
+      if(points.length === 3){
+        nxtbtn.disabled = false;
+      }
     };
     svg.addEventListener("click", svgClickListener);
   } else {
@@ -64,21 +68,18 @@ function toggleSvgClickListener(enable) {
 
 if (clickKara === 0) {
   toggleSvgClickListener(true);
-  document.getElementById("prev-button").disabled = true;
 }
 
-document.getElementById("next-button").addEventListener("click", function () {
+nxtbtn.addEventListener("click", function () {
   clickKara = 1;
-  // Disable further inputs
-  toggleSvgClickListener(false);
-  document.getElementById("prev-button").disabled = false;
-
-
   if (points.length < 3) {
     alert("Please add at least three points by clicking on the SVG.");
     return;
   }
-
+  // Disable further inputs
+  prevbtn.disabled = false;
+  toggleSvgClickListener(false);
+  arandom.disabled = true;
   if (convexHull.length === 0) {
     // Sort the points by x and then y coordinate
     points.sort(function (a, b) {
@@ -146,6 +147,9 @@ document.getElementById("next-button").addEventListener("click", function () {
       line.setAttribute("stroke-width", "2.5");
       line.setAttribute("class", "solid-line"); // Add class for animation
       svg.appendChild(line);
+      if(convexHull[0].x === convexHull[convexHull.length - 1].x && convexHull[0].y === convexHull[convexHull.length - 1].y){
+        nxtbtn.disabled = true;
+      }
     }
     console.log(
       "x:" +
@@ -158,15 +162,22 @@ document.getElementById("next-button").addEventListener("click", function () {
   }
 });
 
-document.getElementById("prev-button").addEventListener("click", function () {
+prevbtn.addEventListener("click", function () {
   if (actionHistory.length === 0) {
     alert("No previous actions to undo.");
     return;
-  }
+  } else if(actionHistory.length === 1){
+    toggleSvgClickListener(true);
+    convexHull.length = 0;
+    arandom.disabled = false;
+  } 
   const lastAction = actionHistory.pop();
   if (lastAction.action === "next") {
     svg.removeChild(svg.lastChild);
     convexHull.pop();
+  }
+  if(nxtbtn.disabled){
+    nxtbtn.disabled = false;
   }
 });
 
