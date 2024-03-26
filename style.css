@@ -28,6 +28,11 @@ h1 {
 #text-container-left {
   width: 20%; /* Adjust this value as needed */
   word-wrap: break-word;
+  text-align: center;
+  vertical-align: middle;
+  padding-top: 5%;
+  padding-right: 4%;
+  font-size: 25px ;
 }
 
 .svg-container {
