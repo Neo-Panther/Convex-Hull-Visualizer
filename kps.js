@@ -5,6 +5,7 @@ let currentStep = "drawLines"; // Track the current step of the algorithm
 const svg_container = document.getElementsByClassName("svg-container")[0];
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 const nxtbtn = document.getElementById("next-button");
+const prevbtn = document.getElementById("prev-button");
 svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
@@ -18,10 +19,28 @@ var clickKara = 0;
  * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // add these lines
  * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines
  * cdot : {x: number, y: number, c: class, pc: class}[]  // change dot class
- * cline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // change line class
- * default class: solid black
+ * instr: "instruction to show"
  * class => string
 */
+
+// Clear button functionality
+document.getElementById("clear-button").addEventListener("click", function () {
+  location.reload(); // Reload the page
+});
+// Random points function
+document.getElementById("add-random-button").addEventListener("click", function () {
+    const svgWidth = svg.width.animVal.value - 100;
+    const svgHeight = svg.height.animVal.value - 100;
+    const svgX = 50;
+    const svgY = 50;
+
+    for (let i = 0; i < 5; i++) {
+      const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
+      const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
+      addPointToSvg(x, y); // Call the existing function to add a point to the SVG
+      points.push({ x: x, y: y });
+    }
+  });
 
 function getSlope(point1, point2) {
   return (point1.y - point2.y) / (point2.x - point1.x);
@@ -79,6 +98,7 @@ function kps(points) {
       { x1: pumin.x, x2: pumax.x, y1: pumin.y, y2: pumax.y, c: "divider" },
       { x1: plmin.x, x2: plmax.x, y1: plmin.y, y2: plmax.y, c: "divider" },
     ],
+    instr: "We find pumin, pumax and plmin, plmax to divide the upper hull and lower hull respectively"
   });
   ACTIONS.push({
     rdot: lowerHull.filter((point) => (point.x != pumax.x || point.y != pumax.y) && (point.x != pumin.x || point.y != pumin.y)),
@@ -86,6 +106,7 @@ function kps(points) {
       { x1: pumin.x, x2: pumax.x, y1: pumin.y, y2: pumax.y, c: "divider" },
       { x1: plmin.x, x2: plmax.x, y1: plmin.y, y2: plmax.y, c: "divider" },
     ],
+    instr: "Let us now focus on the upper hull points"
   });
   ans.push(...upper_hull(pumin, pumax, upperHull));
   const newLowerHull = [];
@@ -98,6 +119,7 @@ function kps(points) {
       { x1: plmin.x, x2: plmax.x, y1: plmin.y, y2: plmax.y, c: "divider" },
     ],
     adot: lowerHull.filter((point) => point !== pumax || point !== pumin),
+    instr: "We return all original points after finding the upper hull"
   });
   ACTIONS.push({
     rdot: upperHull.filter((point) => {
@@ -112,6 +134,7 @@ function kps(points) {
       { x1: pumin.x, x2: pumax.x, y1: pumin.y, y2: pumax.y, c: "divider" },
       { x1: plmin.x, x2: plmax.x, y1: plmin.y, y2: plmax.y, c: "divider" },
     ],
+    instr: "Let us now focus on the lower hull points"
   });
   lowerHull = newLowerHull;
   plmin = { x: plmin.x, y: -plmin.y };
@@ -132,6 +155,7 @@ function kps(points) {
       }
       return 1;
     }),
+    instr: "We return all original points after finding the lower hull"
   });
   return [
     ...new Map(ans.map((point) => [`${point.x}:${point.y}`, point])).values(),
@@ -162,6 +186,7 @@ function upper_hull(pmin, pmax, T) {
         c: "medianx",
       },
     ],
+    instr: "We find the median line to divide points into left and right"
   });
   const Tleft = [],
     Tright = [];
@@ -190,7 +215,8 @@ function upper_hull(pmin, pmax, T) {
       y1: 0,
       y2: svg.height.animVal.value,
       c: "medianx"
-    }]
+    }],
+    instr: "We divide the points into left and right based on the median line"
   });
   const temp = upper_bridge(T, median);
   const pl = temp[0],
@@ -236,6 +262,7 @@ function upper_hull(pmin, pmax, T) {
       },
     ],
     rdot: [...removepoints],
+    instr: "We form a convex polygon with pmin, pl, pr, pmax; points inside will surely not be on the convex hull"
   });
   ACTIONS.push({
     rdot: [...Tright],
@@ -262,6 +289,7 @@ function upper_hull(pmin, pmax, T) {
         c: "trapezium",
       },
     ],
+    instr: "We recurse on the remaining points on the left half"
   });
   ans.push(...upper_hull(pmin, pl, Tleft));
   ans.push(pl, pr);
@@ -276,6 +304,7 @@ function upper_hull(pmin, pmax, T) {
       }),
     ],
     rdot: [...Tleft],
+    instr: "We recurse on the remaining points on the right half"
   });
   ans.push(...upper_hull(pr, pmax, Tright));
   ACTIONS.push({
@@ -286,6 +315,7 @@ function upper_hull(pmin, pmax, T) {
       pc: "right",
       c: ""
     }})],
+    instr: "We return all the points of this half after finding the hull points"
   });
   return ans;
 }
@@ -307,6 +337,7 @@ function upper_bridge(S, L) {
           c: "hull",
         },
       ],
+      instr: "Since there are only two points under consideration, these must lie on the hull"
     });
     return S[0].x < S[1].x ? [S[0], S[1]] : [S[1], S[0]];
   }
@@ -349,6 +380,7 @@ function upper_bridge(S, L) {
       }),
     ],
     rdot: [...removepoints],
+    instr: "We pair the points randomly, while removing vertical ones"
   });
   // Calculate the median slope
   let slopes = pairs.map((pair) => pair.k);
@@ -356,7 +388,7 @@ function upper_bridge(S, L) {
   let medianSlope = slopes[Math.floor(slopes.length / 2)];
 
   ACTIONS.push({
-    cline: [
+    aline: [
       {
         x1: pairs[Math.floor(slopes.length / 2)][0].x,
         x2: pairs[Math.floor(slopes.length / 2)][1].x,
@@ -365,6 +397,7 @@ function upper_bridge(S, L) {
         c: "median-slope",
       },
     ],
+    instr: "We find the line with the median slope among all pairs"
   });
 
   // Divide pairs into SMALL, EQUAL, and LARGE based on their slopes
@@ -388,9 +421,10 @@ function upper_bridge(S, L) {
     MAX[0]
   );
 
-  const supportl = getSupportingLine(medianSlope, intercept);
+  const supportl = getSupportingLine(medianSlope, intercept, S[0].y < 0);
   ACTIONS.push({
     aline: [supportl],
+    instr: "We find the support line with the median slope"
   });
   // Determine if h contains the bridge
   if (pk.x < L && pm.x >= L) {
@@ -416,6 +450,7 @@ function upper_bridge(S, L) {
           c: "hull",
         },
       ],
+      instr: "Since a point on the the support line lies in each half (created by  median-x), it must be our bridge"
     });
     return [pk, pm];
   }
@@ -429,6 +464,7 @@ function upper_bridge(S, L) {
     LARGE.concat(EQUAL).forEach((pair) => candidates.push(pair[1]));
     ACTIONS.push({
       rdot: LARGE.concat(EQUAL).map((pair) => pair[0]),
+      instr: "Since all points on the the support line lie to the left of the median-x, we remove the first point of lines with smaller slope (for lower bridge) or larger slope (for upper bridge)"
     });
     removepoints.push(...LARGE.concat(EQUAL).map((pair) => pair[0]));
   }
@@ -442,6 +478,7 @@ function upper_bridge(S, L) {
     });
     ACTIONS.push({
       rdot: SMALL.concat(EQUAL).map((pair) => pair[1]),
+      instr: "Since all points on the support line lie to the right of the median-x, we remove the second point of lines with larger slope (for lower bridge) or smaller slope (for upper bridge)"
     });
     removepoints.push(...SMALL.concat(EQUAL).map((pair) => pair[1]));
   }
@@ -457,21 +494,31 @@ function upper_bridge(S, L) {
           c: "random-pair-line",
         };
       }),
+      {
+        x1: pairs[Math.floor(slopes.length / 2)][0].x,
+        x2: pairs[Math.floor(slopes.length / 2)][1].x,
+        y1: pairs[Math.floor(slopes.length / 2)][0].y,
+        y2: pairs[Math.floor(slopes.length / 2)][1].y,
+        c: "median-slope",
+      },
     ],
+    instr: "We remove all the lines and recurse on the remaining ones to find the bridge"
   });
   const ans = upper_bridge(candidates, L);
   ACTIONS.push({
     adot: [...removepoints],
+    instr: "We add the removed points after finiding the upper bridge"
   });
   return ans;
 }
 
-function getSupportingLine(medianSlope, intercept) {
+function getSupportingLine(medianSlope, intercept, islower) {
+  const h = svg.height.animVal.value, w = svg.width.animVal.value;
   return {
     x1: 0,
-    x2: svg.width.animVal.value,
-    y1: -intercept,
-    y2: -(medianSlope * svg.width.animVal.value + intercept),
+    x2: w,
+    y1: (islower) ? intercept : -intercept,
+    y2: (islower) ? (medianSlope * w + intercept) : -(medianSlope * w + intercept),
     c: "support",
   };
 }
@@ -501,7 +548,7 @@ function addLineToSvg(x1, y1, x2, y2, c){
 }
   
 svg.addEventListener("click", function(event) {
-  if(svg.classList.contains("disabled")){
+  if(svg.classList.contains("running")){
     alert("Cannot add point while algorithm is running.");
     return;
   }
@@ -514,20 +561,22 @@ svg.addEventListener("click", function(event) {
 });
 
 var msg = "Please add at least three points by clicking on the SVG.";
-nxtbtn.addEventListener("click", function () {
+nxtbtn.addEventListener("click", function() {
   if(nxtbtn.classList.contains("disabled")){
     alert(msg);
     return;
   } else if(clickKara === 0) {
     // Disable further inputs
-    svg.classList.add("disabled");
+    svg.classList.add("running");
+    prevbtn.classList.remove("disabled");
     console.log("kps answer");
     console.log(...kps(points));
   }
   clickKara += 1;
-  if(clickKara >= ACTIONS.length){
+  if(clickKara > ACTIONS.length){
     nxtbtn.classList.add("disabled");
     msg = "Algorithm is finished, clear points or reload to restart";
+    clickKara -= 1;
     return;
   }
   currentAction = ACTIONS[clickKara-1];
@@ -561,6 +610,7 @@ nxtbtn.addEventListener("click", function () {
   }
   if ("aline" in currentAction && currentAction.aline.length != 0){
     for(const line of currentAction.aline){
+      if(line.c === "support") continue;
       if(line.y1 < 0) line.y1 *= -1;
       if(line.y2 < 0) line.y2 *= -1;
     }
@@ -572,6 +622,7 @@ nxtbtn.addEventListener("click", function () {
   } 
   if ("rline" in currentAction && currentAction.rline.length != 0) {
     for(const line of currentAction.rline){
+      if(line.c === "support") continue;
       if(line.y1 < 0) line.y1 *= -1;
       if(line.y2 < 0) line.y2 *= -1;
     }
@@ -582,22 +633,6 @@ nxtbtn.addEventListener("click", function () {
         if(Number(line.getAttribute('x1')) === irline.x1 && Number(line.getAttribute('y1')) === irline.y1 && Number(line.getAttribute('x2')) === irline.x2 && Number(line.getAttribute('y2')) === irline.y2 && line.classList.contains(irline.c)){
           console.log(line);
           line.remove();
-        }
-      }
-    }
-  }
-  if ("cline" in currentAction && currentAction.cline.length != 0) {
-    for(const line of currentAction.cline){
-      if(line.y1 < 0) line.y1 *= -1;
-      if(line.y2 < 0) line.y2 *= -1;
-    }
-    console.log("change class line", currentAction.cline);
-    const lines = document.getElementsByTagName("line");
-    for(const icline of currentAction.cline){
-      for(const line of lines){
-        if(Number(line.getAttribute('x1')) === icline.x1 && Number(line.getAttribute('y1')) === icline.y1 && Number(line.getAttribute('x2')) === icline.x2 && Number(line.getAttribute('y2')) === icline.y2){
-          console.log(line);
-          line.setAttribute("class", icline.c);
         }
       }
     }
@@ -613,6 +648,89 @@ nxtbtn.addEventListener("click", function () {
         if(Number(dot.getAttribute('cx')) === icdot.x && Number(dot.getAttribute('cy')) === icdot.y){
           console.log(dot);
           dot.setAttribute("class", icdot.c);
+        }
+      }
+    }
+  }
+});
+
+prevbtn.addEventListener("click", function() {
+  if(prevbtn.classList.contains("disabled")){
+    alert("No previous step to go to");
+    return;
+  }
+  clickKara-=1;
+  if(clickKara===0){
+    prevbtn.classList.add("disabled");
+  }
+  const currentAction = ACTIONS[clickKara];
+  
+  if ("rdot" in currentAction && currentAction.rdot.length != 0){
+    for(const dot of currentAction.rdot){
+      if(dot.y < 0) dot.y *= -1;
+    }
+    console.log("add dot", currentAction.rdot);
+    for(const dot of currentAction.rdot){
+      console.log(dot);
+      addPointToSvg(dot.x, dot.y, dot.c);
+    }
+  } 
+  if ("adot" in currentAction && currentAction.adot.length != 0) {
+    const dots = document.getElementsByTagName("circle");
+    console.log(dots);
+    for(const dot of currentAction.adot){
+      if(dot.y < 0) dot.y *= -1;
+    }
+    console.log("remove dot", currentAction.adot);
+    for(const irdot of currentAction.adot){
+      for(const dot of dots){
+        if(Number(dot.getAttribute('cx')) === irdot.x && Number(dot.getAttribute('cy')) === irdot.y){
+          console.log(dot);
+          dot.remove();
+        }
+      }
+    }
+  }
+  if ("rline" in currentAction && currentAction.rline.length != 0){
+    for(const line of currentAction.rline){
+      if(line.c === "support") continue;
+      if(line.y1 < 0) line.y1 *= -1;
+      if(line.y2 < 0) line.y2 *= -1;
+    }
+    console.log("add line", currentAction.rline);
+    for(const line of currentAction.rline){
+      console.log(line);
+      addLineToSvg(line.x1, line.y1, line.x2, line.y2, line.c);
+    }
+  } 
+  if ("aline" in currentAction && currentAction.aline.length != 0) {
+    for(const line of currentAction.aline){
+      if(line.c === "support") continue;
+      if(line.y1 < 0) line.y1 *= -1;
+      if(line.y2 < 0) line.y2 *= -1;
+    }
+    console.log("remove line", currentAction.aline);
+    const lines = document.getElementsByTagName("line");
+    for(const irline of currentAction.aline){
+      for(const line of lines){
+        if(Number(line.getAttribute('x1')) === irline.x1 && Number(line.getAttribute('y1')) === irline.y1 && Number(line.getAttribute('x2')) === irline.x2 && Number(line.getAttribute('y2')) === irline.y2 && line.classList.contains(irline.c)){
+          console.log(line);
+          line.remove();
+        }
+      }
+    }
+  }
+  if ("cdot" in currentAction && currentAction.cdot.length != 0) {
+    for(const dot of currentAction.cdot){
+      if(dot.y < 0) dot.y *= -1;
+    }
+    console.log("change class dot", currentAction.cdot);
+    const dots = document.getElementsByTagName("circle");
+    for(const icdot of currentAction.cdot){
+      for(const dot of dots){
+        if(Number(dot.getAttribute('cx')) === icdot.x && Number(dot.getAttribute('cy')) === icdot.y){
+          console.log(dot);
+          dot.setAttribute("class", icdot.pc);
         }
       }
     }

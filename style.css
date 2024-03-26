@@ -165,11 +165,11 @@ line {
   animation: drawLine 0.4s ease forwards;
 }
 .random-pair-line{
-  stroke: yellow;
+  stroke: rgb(255, 255, 120);
   animation: drawLine 0.4s ease forwards;
 }
 .median-slope{
-  stroke: green;
+  stroke: rgb(0, 155, 0);
 }
 .support{
   stroke: violet;
