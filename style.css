@@ -5,6 +5,8 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  height: auto;
+  min-height: 0;
 }
 
 header {
@@ -26,7 +28,7 @@ h1 {
 }
 
 #text-container-left {
-  width: 20%; /* Adjust this value as needed */
+  width: 30%; /* Adjust this value as needed */
   word-wrap: break-word;
   text-align: center;
   vertical-align: middle;
@@ -36,21 +38,21 @@ h1 {
 }
 
 .svg-container {
-  width: 70%; /* Adjust this value as needed */
+  width: 60%; /* Adjust this value as needed */
   height: 400px;
   border: 2px solid #444;
   margin-bottom: 20px;
 }
 
-
 .guide-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 100%;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: stretch;
+  align-content: space-around;
   background-color: #0f0f0f;
-  padding: 10px;
-  border-radius: 10px;
-  content: max-content;
+  gap: 10px 10px;
 }
 
 #prev-button,
@@ -62,16 +64,19 @@ h1 {
   border: none;
   color: #fff;
   padding: 10px 20px;
+  margin: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
   border-radius: 10%;
-  width: 160px;
+  flex: 0 1 140px;
   transition: 0.8 ease-in-out;
   /* margin-right: 50px; */
 }
+#prev-button:hover,
 #next-button:hover,
 #clear-button:hover,
-#add-random-button:hover {
+#add-random-button:hover,
+#skip-steps:hover{
   background-color: #005b41;
   scale: 1.1;
 }
@@ -81,21 +86,14 @@ h1 {
   background-color: gray;
   scale: 1.1;
 }
-#prev-button:hover {
-  background-color: #005b41;
-  scale: 1.1;
-}
-
 #prev-button:disabled,
-#next-button:disabled {
+#next-button:disabled,
+#clear-button:disabled,
+#add-random-button:disabled,
+#skip-steps:disabled {
   background-color: rgb(39, 39, 39); /* Light gray */
   color: #666666; /* Dark gray */
   cursor: not-allowed;
-}
-.text-container {
-  flex-grow: 1;
-  text-align: center;
-  padding: 0 20px; /* Added padding to create space between buttons and instructions */
 }
 
 #instruction {
