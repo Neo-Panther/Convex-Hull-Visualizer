@@ -595,6 +595,7 @@ nxtbtn.addEventListener("click", function() {
     return;
   }
   currentAction = ACTIONS[clickKara-1];
+  // element.innerHTML = currentAction.instr;
   console.log("click", clickKara);
 
   if ("adot" in currentAction && currentAction.adot.length != 0){

@@ -19,20 +19,24 @@ h1 {
 
 .main {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column; /* Added to stack elements vertically */
+  justify-content: center; /* Adjust as needed */
+  align-items: flex-start; /* Adjust as needed */
+  flex-wrap: wrap; /* Allow wrapping */
   height: calc(100vh - 80px); /* Adjust based on your header height */
 }
 
+.text-container-left {
+  width: 20%; /* Adjust this value as needed */
+  word-wrap: break-word;
+}
+
 .svg-container {
-  width: 50%;
+  width: 70%; /* Adjust this value as needed */
   height: 400px;
   border: 2px solid #444;
   margin-bottom: 20px;
-
-  /* Added to create space between SVG and buttons */
 }
+
 
 .guide-container {
   display: flex;
@@ -62,9 +66,7 @@ h1 {
 }
 #next-button:hover,
 #clear-button:hover,
-#add-random-button:hover,
-#skip-steps:hover,
-#prev-button:hover {
+#add-random-button:hover {
   background-color: #005b41;
   scale: 1.1;
 }
@@ -72,6 +74,10 @@ h1 {
 #page1-button:hover,
 #page2-button:hover {
   background-color: gray;
+  scale: 1.1;
+}
+#prev-button:hover {
+  background-color: #005b41;
   scale: 1.1;
 }
 .text-container {
@@ -107,8 +113,7 @@ h1 {
   }
 }
 /* Add animation for points */
-circle,
-.dot {
+circle {
   fill: rgb(119, 1, 255);
   stroke: none;
   animation: fadeInOut 0.5s ease forwards;
@@ -185,3 +190,4 @@ line {
   stroke: yellow;
   stroke-dasharray: 10, 10; /* Set the dash pattern for dashed lines */
 }
+
