@@ -64,12 +64,15 @@ function toggleSvgClickListener(enable) {
 
 if (clickKara === 0) {
   toggleSvgClickListener(true);
+  document.getElementById("prev-button").disabled = true;
 }
 
 document.getElementById("next-button").addEventListener("click", function () {
   clickKara = 1;
   // Disable further inputs
   toggleSvgClickListener(false);
+  document.getElementById("prev-button").disabled = false;
+
 
   if (points.length < 3) {
     alert("Please add at least three points by clicking on the SVG.");

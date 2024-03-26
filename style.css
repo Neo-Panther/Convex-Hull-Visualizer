@@ -74,6 +74,12 @@ h1 {
   background-color: gray;
   scale: 1.1;
 }
+
+#prev-button:disabled {
+  background-color: rgb(39, 39, 39); /* Light gray */
+  color: #666666; /* Dark gray */
+  cursor: not-allowed;
+}
 .text-container {
   flex-grow: 1;
   text-align: center;
@@ -109,7 +115,7 @@ h1 {
 /* Add animation for points */
 circle,
 .dot {
-  fill: rgb(119, 1, 255);
+  fill: rgb(118, 1, 252);
   stroke: none;
   animation: fadeInOut 0.5s ease forwards;
   r: 7;
