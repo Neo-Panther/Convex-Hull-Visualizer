@@ -14,7 +14,7 @@
     <div class="main">
       <div id="text-container-left">
         
-        Add points by tapping in the box
+        Add points by tapping in the box or from a json file
 
       </div>
       <div class="svg-container"></div>
@@ -29,8 +29,11 @@
         <button id="clear-button">
           <p>Clear</p>
         </button>
+        <button id="get-file">Add File Points</button>
+        <input type="file" id="points-file" style="display: none;" multiple accept=".json">
         <button id="add-random-button"><p>Add 5 Random points</p></button>
         <button id="skip-steps" disabled><p>Skip 5 Steps</p></button>
+        <button id="skip-end" disabled><p>Skip to Complete Hull</p></button>
       </div>
       <div style="width: 1px;height: 15px;"></div>
     </div>

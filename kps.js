@@ -8,6 +8,9 @@ const nxtbtn = document.getElementById("next-button");
 const prevbtn = document.getElementById("prev-button");
 const arandom = document.getElementById("add-random-button");
 const skipbtn = document.getElementById("skip-steps");
+const skipendbtn = document.getElementById("skip-end");
+const afilebtn = document.getElementById("get-file");
+const afile = document.getElementById("points-file");
 svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
@@ -25,17 +28,42 @@ const textc = document.getElementById('text-container-left');
  * class => string
 */
 
+async function parseJsonFile(file) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader()
+    fileReader.onload = event => resolve(JSON.parse(event.target.result))
+    fileReader.onerror = error => reject(error)
+    fileReader.readAsText(file)
+  })
+}
+// Get Points from file
+afilebtn.addEventListener("click", function() {
+  afile.click();
+});
+afile.addEventListener('change', function (event) {
+  const files = event.target.files;
+  for(const file of files){
+    parseJsonFile(file).then(function(fpoints) {
+      const npoints = [];
+      for(const point of fpoints){
+        npoints.push({x: Number(point.x), y: Number(point.y)});
+      }
+      for(const point of npoints){
+        // TODO: scale
+        points.push(point);
+        addPointToSvg(point.x, point.y);
+      }
+    });
+  }
+});
 // Clear button functionality
 document.getElementById("clear-button").addEventListener("click", function () {
   location.reload(); // Reload the page
 });
 // Random points function
 arandom.addEventListener("click", function () {
-  if(arandom.disabled){
-    alert("Cannot add points while algorithm is running.");
-    return;
-  }
   skipbtn.disabled = false;
+  skipendbtn.disabled = false;
   nxtbtn.disabled = false;
   const svgWidth = svg.width.animVal.value - 100;
   const svgHeight = svg.height.animVal.value - 100;
@@ -51,12 +79,22 @@ arandom.addEventListener("click", function () {
 });
 // Skip steps for faster completion
 skipbtn.addEventListener("click", function(){
-  if(nxtbtn.disabled){
-    alert(msg);
-    return;
-  }
   for(var i = 0; i < 5; i++)
     nxtbtn.click();
+});
+
+//skip to completed hull
+skipendbtn.addEventListener('click', function(){
+  nxtbtn.disabled = true;
+  skipbtn.disabled = true;
+  skipendbtn.disabled = true;
+  prevbtn.disabled = false;
+  ACTIONS.length = 0;
+  kps(points);
+  for(const hull of convexHull){
+    addLineToSvg(hull.x1, (hull.y1 >= 0)? hull.y1: -hull.y1, hull.x2, (hull.y2 >= 0)? hull.y2: -hull.y2, "hull");
+  }
+  clickKara = ACTIONS.length;
 });
 
 function getSlope(point1, point2) {
@@ -344,6 +382,13 @@ function upper_bridge(S, L) {
   let candidates = [];
 
   if (S.length === 2) {
+    convexHull.push({
+      x1: S[0].x,
+      x2: S[1].x,
+      y1: S[0].y,
+      y2: S[1].y,
+      c: "hull",
+    });
     ACTIONS.push({
       aline: [
         {
@@ -445,6 +490,13 @@ function upper_bridge(S, L) {
   });
   // Determine if h contains the bridge
   if (pk.x < L && pm.x >= L) {
+    convexHull.push({
+      x1: pk.x,
+      x2: pm.x,
+      y1: pk.y,
+      y2: pm.y,
+      c: "hull",
+    });
     ACTIONS.push({
       rline: [
         {
@@ -571,7 +623,23 @@ function addLineToSvg(x1, y1, x2, y2, c){
   console.log("element=", line);
 }
 
+function removeDotFromSvg(dot){
+  var newdot = dot.cloneNode(true);
+  newdot.style.animationDirection = "reverse";
+  newdot.style.animationFillMode = "backwards";
+  dot.parentNode.replaceChild(newdot, dot);
+  setTimeout(function() {newdot.remove()}, 460);
+}
+function removeLineFromSvg(line){
+  var newline = line.cloneNode(true);
+  newline.style.animationDirection = "reverse";
+  newline.style.animationFillMode = "backwards";
+  line.parentNode.replaceChild(newline, line);
+  setTimeout(function() {newline.remove()}, 360);
+}
+
 svg.addEventListener("click", function(event) {
+  // dont remove this idiot
   if(svg.classList.contains("running")){
     alert("Cannot add point while algorithm is running.");
     return;
@@ -581,19 +649,17 @@ svg.addEventListener("click", function(event) {
   if(points.length === 3){
     nxtbtn.disabled = false;
     skipbtn.disabled = false;
+    skipendbtn.disabled = false;
   }
   addPointToSvg(event.clientX - off.left, event.clientY - off.top, "");
 });
 
-var msg = "Please add at least three points by clicking on the SVG.";
 nxtbtn.addEventListener("click", function() {
-  if(nxtbtn.disabled){
-    alert(msg);
-    return;
-  } else if(clickKara === 0) {
+  if(clickKara === 0) {
     // Disable further inputs
     svg.classList.add("running");
     arandom.disabled = true;
+    afilebtn.disabled = true;
     prevbtn.disabled = false;
 
     console.log("kps answer");
@@ -603,7 +669,7 @@ nxtbtn.addEventListener("click", function() {
   if(clickKara > ACTIONS.length){
     nxtbtn.disabled = true;
     skipbtn.disabled = true;
-    msg = "Algorithm is finished, clear points or reload to restart";
+    skipendbtn.disabled = true;
     clickKara -= 1;
     return;
   }
@@ -631,8 +697,7 @@ nxtbtn.addEventListener("click", function() {
     for(const irdot of currentAction.rdot){
       for(const dot of dots){
         if(Number(dot.getAttribute('cx')) === irdot.x && Number(dot.getAttribute('cy')) === irdot.y){
-          console.log(dot);
-          dot.remove();
+          removeDotFromSvg(dot);
         }
       }
     }
@@ -660,8 +725,7 @@ nxtbtn.addEventListener("click", function() {
     for(const irline of currentAction.rline){
       for(const line of lines){
         if(Number(line.getAttribute('x1')) === irline.x1 && Number(line.getAttribute('y1')) === irline.y1 && Number(line.getAttribute('x2')) === irline.x2 && Number(line.getAttribute('y2')) === irline.y2 && line.classList.contains(irline.c)){
-          console.log(line);
-          line.remove();
+          removeLineFromSvg(line);
         }
       }
     }
@@ -672,11 +736,13 @@ nxtbtn.addEventListener("click", function() {
     }
     console.log("change class dot", currentAction.cdot);
     const dots = document.getElementsByTagName("circle");
+    const dots2 = [...dots];
     for(const icdot of currentAction.cdot){
-      for(const dot of dots){
+      for(const dot of dots2){
         if(Number(dot.getAttribute('cx')) === icdot.x && Number(dot.getAttribute('cy')) === icdot.y){
-          console.log(dot);
-          dot.setAttribute("class", icdot.c);
+          removeDotFromSvg(dot)
+          addPointToSvg(icdot.x, icdot.y, icdot.c);
+          // dot.setAttribute("class", icdot.c);
         }
       }
     }
@@ -684,21 +750,19 @@ nxtbtn.addEventListener("click", function() {
 });
 
 prevbtn.addEventListener("click", function() {
-  if(prevbtn.disabled){
-    alert("No previous step to go to");
-    return;
-  }
   if(nxtbtn.disabled) {
     skipbtn.disabled = false;
     nxtbtn.disabled = false;
+    skipendbtn.disabled = false;
   }
   clickKara-=1;
   const currentAction = ACTIONS[clickKara];
   if(clickKara===0){
     prevbtn.disabled = true;
     arandom.disabled = false;
+    afilebtn.disabled = false;
     svg.classList.remove("running");
-    textc.innerHTML = "Add points by tapping in the box";
+    textc.innerHTML = "Add points by tapping in the box or from a json file";
   } else {
     textc.innerHTML = currentAction.instr;
   }

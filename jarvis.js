@@ -13,7 +13,45 @@ let svgClickListener = null; // Variable to store the click listener
 const arandom = document.getElementById("add-random-button");
 const nxtbtn = document.getElementById("next-button");
 const prevbtn = document.getElementById("prev-button");
+const skipendbtn = document.getElementById("skip-end");
+const afilebtn = document.getElementById("get-file");
+const afile = document.getElementById("points-file");
 
+// Points from file
+async function parseJsonFile(file) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader()
+    fileReader.onload = event => resolve(JSON.parse(event.target.result))
+    fileReader.onerror = error => reject(error)
+    fileReader.readAsText(file)
+  })
+}
+// Get Points from file
+afilebtn.addEventListener("click", function() {
+  afile.click();
+});
+afile.addEventListener('change', function (event) {
+  const files = event.target.files;
+  for(const file of files){
+    parseJsonFile(file).then(function(fpoints) {
+      const npoints = [];
+      for(const point of fpoints){
+        npoints.push({x: Number(point.x), y: Number(point.y)});
+      }
+      for(const point of npoints){
+        // TODO: scale
+        addPointToSvg({ clientX: point.x + 150, clientY: point.y + 150});
+      }
+    });
+  }
+});
+// Skip to completed hull
+skipendbtn.addEventListener('click', function(){
+  afilebtn.disabled = true;
+  while(!nxtbtn.disabled){
+    nxtbtn.click();
+  }
+});
 // Clear button functionality
 document.getElementById("clear-button").addEventListener("click", function () {
   location.reload(); // Reload the page
@@ -27,6 +65,7 @@ arandom.addEventListener("click", function () {
     const svgX = svgRect.left + 50;
     const svgY = svgRect.top + 50;
     nxtbtn.disabled = false;
+    skipendbtn.disabled = false;
     for (let i = 0; i < 5; i++) {
       const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
       const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
@@ -58,6 +97,7 @@ function toggleSvgClickListener(enable) {
       addPointToSvg(event);
       if(points.length === 3){
         nxtbtn.disabled = false;
+        skipendbtn.disabled = false;
       }
     };
     svg.addEventListener("click", svgClickListener);
@@ -72,12 +112,9 @@ if (clickKara === 0) {
 
 nxtbtn.addEventListener("click", function () {
   clickKara = 1;
-  if (points.length < 3) {
-    alert("Please add at least three points by clicking on the SVG.");
-    return;
-  }
   // Disable further inputs
   prevbtn.disabled = false;
+  afilebtn.disabled = true;
   toggleSvgClickListener(false);
   arandom.disabled = true;
   if (convexHull.length === 0) {
@@ -149,6 +186,7 @@ nxtbtn.addEventListener("click", function () {
       svg.appendChild(line);
       if(convexHull[0].x === convexHull[convexHull.length - 1].x && convexHull[0].y === convexHull[convexHull.length - 1].y){
         nxtbtn.disabled = true;
+        skipendbtn.disabled = true;
       }
     }
     console.log(
@@ -163,10 +201,9 @@ nxtbtn.addEventListener("click", function () {
 });
 
 prevbtn.addEventListener("click", function () {
-  if (actionHistory.length === 0) {
-    alert("No previous actions to undo.");
-    return;
-  } else if(actionHistory.length === 1){
+  if(actionHistory.length === 1){
+    prevbtn.disabled = true;
+    afilebtn.disabled = false;
     toggleSvgClickListener(true);
     convexHull.length = 0;
     arandom.disabled = false;
@@ -178,6 +215,7 @@ prevbtn.addEventListener("click", function () {
   }
   if(nxtbtn.disabled){
     nxtbtn.disabled = false;
+    skipendbtn.disabled = false;
   }
 });
 
