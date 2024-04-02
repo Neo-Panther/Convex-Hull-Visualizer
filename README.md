@@ -15,3 +15,5 @@ The visualization apps have been written in vanilla js, plain html and css, with
 Build command for `documentation.js`
 
 > $ documentation build kps.js jarvis.js -f html --github -o . --config documentation.yml
+
+NOTE: In the generated ouput the sha code of github links was corrected to main, and incorrect line numbers in links were removed.
