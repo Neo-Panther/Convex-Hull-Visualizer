@@ -4,6 +4,9 @@ After extracting all the files to the same directory, just open [Convex Hull Vis
 ### Opening the Documentation
 After extracting all the files to the same directory, just open [Documentation](./index.html). Alternatively, you can open `index.html` file in any web browser.
 
+### Code and Algorithm Analysis
+The analysis of the algorithms and their code implementations are present in the `About` tab of the visualizer.
+
 ### Adding points from file
 The file should be in json format, containing an array of point objects with numerical attributes x and y.  `{'x': <Number>, 'y': <Number>}[]`
 
