@@ -1,8 +1,36 @@
-/**
- * This array stores the input points for the kps algorithm<br>
- * Point object<br>
- * x: number  // x-coordinate on svg <br>
- * y: number  // y-coordinate on svg <br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: kps.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: kps.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * This array stores the input points for the kps algorithm&lt;br>
+ * Point object&lt;br>
+ * x: number  // x-coordinate on svg &lt;br>
+ * y: number  // y-coordinate on svg &lt;br>
  * @type {Array}
  */
 const points = [];
@@ -60,15 +88,15 @@ svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
 /**
- * <b>Action[]</b>
- * Action object<br>
- * adot : {x: number, y: number, c: class}[]  // add these dots<br>
- * rdot : {x: number, y: number}[]  // remove these dots<br>
- * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  <br>
- * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines<br>
- * cdot : {x: number, y: number, c: class, pc: class}[]  // change dot class<br>
- * instr: "instruction to show"<br>
- * class => string<br>
+ * &lt;b>Action[]&lt;/b>
+ * Action object&lt;br>
+ * adot : {x: number, y: number, c: class}[]  // add these dots&lt;br>
+ * rdot : {x: number, y: number}[]  // remove these dots&lt;br>
+ * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  &lt;br>
+ * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines&lt;br>
+ * cdot : {x: number, y: number, c: class, pc: class}[]  // change dot class&lt;br>
+ * instr: "instruction to show"&lt;br>
+ * class => string&lt;br>
  * @type {Array}
 */
 const ACTIONS = [];
@@ -79,7 +107,7 @@ const textc = document.getElementById('text-container-left');
 /**
  * Parses a JSON file asynchronously.
  * @param {File} file - The JSON file to parse.
- * @returns {Promise<any>} A promise that resolves with the parsed JSON data.
+ * @returns {Promise&lt;any>} A promise that resolves with the parsed JSON data.
  */
 async function parseJsonFile(file) {
   return new Promise((resolve, reject) => {
@@ -148,7 +176,7 @@ arandom.addEventListener("click", function () {
   const svgX = 50;
   const svgY = 50;
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i &lt; 5; i++) {
     const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
     const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
     addPointToSvg(x, y); // Call the existing function to add a point to the SVG
@@ -161,7 +189,7 @@ arandom.addEventListener("click", function () {
  * When clicked, it triggers a click event on the "Next" button element five times.
  */
 skipbtn.addEventListener("click", function(){
-  for(var i = 0; i < 5; i++)
+  for(var i = 0; i &lt; 5; i++)
     nxtbtn.click();
 });
 
@@ -228,13 +256,13 @@ function kps(points) {
     plmax = pmax;
   for (const point of points) {
     if (pmin.x === point.x) {
-      if (point.y < pumin.y) {
+      if (point.y &lt; pumin.y) {
         pumin = point;
       } else if (point.y > plmin.y) {
         plmin = point;
       }
     } else if (pmax.x === point.x) {
-      if (point.y < pumax.y) {
+      if (point.y &lt; pumax.y) {
         pumax = point;
       } else if (point.y > plmax.y) {
         plmax = point;
@@ -246,7 +274,7 @@ function kps(points) {
   }
   var uslope = getSlope(pumax, pumin);
   for (var i = upperHull.length - 1; i >= 0; i--) {
-    if (getSlope(pumin, upperHull[i]) < uslope) {
+    if (getSlope(pumin, upperHull[i]) &lt; uslope) {
       upperHull.splice(i, 1);
     }
   }
@@ -268,7 +296,7 @@ function kps(points) {
     instr: "We find pumin, pumax and plmin, plmax to divide the upper hull and lower hull respectively"
   });
   ACTIONS.push({
-    rdot: lowerHull.filter((point) => (point.x != pumax.x || point.y != pumax.y) && (point.x != pumin.x || point.y != pumin.y)),
+    rdot: lowerHull.filter((point) => (point.x != pumax.x || point.y != pumax.y) &amp;&amp; (point.x != pumin.x || point.y != pumin.y)),
     rline: [
       { x1: pumin.x, x2: pumax.x, y1: pumin.y, y2: pumax.y, c: "divider" },
       { x1: plmin.x, x2: plmax.x, y1: plmin.y, y2: plmax.y, c: "divider" },
@@ -292,7 +320,7 @@ function kps(points) {
   ACTIONS.push({
     rdot: upperHull.filter((point) => {
       for (const p of ans) {
-        if (p.x === point.x && p.y === point.y) {
+        if (p.x === point.x &amp;&amp; p.y === point.y) {
           return 0;
         }
       }
@@ -315,7 +343,7 @@ function kps(points) {
   ACTIONS.push({
     adot: points.filter((point) => {
       for (const p of ans) {
-        if (p.x === point.x && p.y === point.y) {
+        if (p.x === point.x &amp;&amp; p.y === point.y) {
           return 0;
         }
       }
@@ -376,7 +404,7 @@ function kps(points) {
  * @returns {Object[]} - An array of points representing the upper hull.
  */
 function upper_hull(pmin, pmax, T) {
-  if (pmin.x === pmax.x && pmin.y === pmax.y) {
+  if (pmin.x === pmax.x &amp;&amp; pmin.y === pmax.y) {
     return [];
   }
   T.sort(function (a, b) {
@@ -404,7 +432,7 @@ function upper_hull(pmin, pmax, T) {
   const Tleft = [],
     Tright = [];
   for (const point of T) {
-    if (point.x < median) {
+    if (point.x &lt; median) {
       Tleft.push(point);
     } else {
       Tright.push(point);
@@ -437,7 +465,7 @@ function upper_hull(pmin, pmax, T) {
   const removepoints = [];
   const slopeleft = getSlope(pmin, pl);
   for (var i = Tleft.length - 1; i >= 0; i--) {
-    if (getSlope(pmin, Tleft[i]) < slopeleft) {
+    if (getSlope(pmin, Tleft[i]) &lt; slopeleft) {
       removepoints.push(Tleft[i]);
       Tleft.splice(i, 1);
     }
@@ -569,12 +597,12 @@ function upper_bridge(S, L) {
       ],
       instr: "Since there are only two points under consideration, these must lie on the hull"
     });
-    return S[0].x < S[1].x ? [S[0], S[1]] : [S[1], S[0]];
+    return S[0].x &lt; S[1].x ? [S[0], S[1]] : [S[1], S[0]];
   }
 
   let pairs = [];
-  for (let i = 0; i < S.length; i += 2) {
-    if (i + 1 < S.length) {
+  for (let i = 0; i &lt; S.length; i += 2) {
+    if (i + 1 &lt; S.length) {
       pairs.push([S[i], S[i + 1]]);
     } else {
       candidates.push(S[i]);
@@ -631,7 +659,7 @@ function upper_bridge(S, L) {
   });
 
   // Divide pairs into SMALL, EQUAL, and LARGE based on their slopes
-  let SMALL = pairs.filter((pair) => pair.k < medianSlope);
+  let SMALL = pairs.filter((pair) => pair.k &lt; medianSlope);
   let EQUAL = pairs.filter((pair) => pair.k === medianSlope);
   let LARGE = pairs.filter((pair) => pair.k > medianSlope);
 
@@ -640,10 +668,10 @@ function upper_bridge(S, L) {
     ...S.map((point) => -point.y - medianSlope * point.x)
   );
   let MAX = S.filter(
-    (point) => Math.abs(-point.y - medianSlope * point.x - intercept) < 0.03
+    (point) => Math.abs(-point.y - medianSlope * point.x - intercept) &lt; 0.03
   );
   let pk = MAX.reduce(
-    (minPoint, point) => (point.x < minPoint.x ? point : minPoint),
+    (minPoint, point) => (point.x &lt; minPoint.x ? point : minPoint),
     MAX[0]
   );
   let pm = MAX.reduce(
@@ -651,13 +679,13 @@ function upper_bridge(S, L) {
     MAX[0]
   );
 
-  const supportl = getSupportingLine(medianSlope, intercept, S[0].y < 0);
+  const supportl = getSupportingLine(medianSlope, intercept, S[0].y &lt; 0);
   ACTIONS.push({
     aline: [supportl],
     instr: "We find the support line with the median slope"
   });
   // Determine if h contains the bridge
-  if (pk.x < L && pm.x >= L) {
+  if (pk.x &lt; L &amp;&amp; pm.x >= L) {
     convexHull.push({
       x1: pk.x,
       x2: pm.x,
@@ -700,7 +728,7 @@ function upper_bridge(S, L) {
   }
 
   // h contains only points of S to the left of or on L
-  if (pm.x < L) {
+  if (pm.x &lt; L) {
     SMALL.forEach((pair) => {
       candidates.push(pair[0]);
       candidates.push(pair[1]);
@@ -919,9 +947,9 @@ nxtbtn.addEventListener("click", function() {
   textc.innerHTML = currentAction.instr;
   console.log("click", clickKara);
 
-  if ("adot" in currentAction && currentAction.adot.length != 0){
+  if ("adot" in currentAction &amp;&amp; currentAction.adot.length != 0){
     for(const dot of currentAction.adot){
-      if(dot.y < 0) dot.y *= -1;
+      if(dot.y &lt; 0) dot.y *= -1;
     }
     console.log("add dot", currentAction.adot);
     for(const dot of currentAction.adot){
@@ -929,26 +957,26 @@ nxtbtn.addEventListener("click", function() {
       addPointToSvg(dot.x, dot.y, dot.c);
     }
   } 
-  if ("rdot" in currentAction && currentAction.rdot.length != 0) {
+  if ("rdot" in currentAction &amp;&amp; currentAction.rdot.length != 0) {
     const dots = document.getElementsByTagName("circle");
     console.log(dots);
     for(const dot of currentAction.rdot){
-      if(dot.y < 0) dot.y *= -1;
+      if(dot.y &lt; 0) dot.y *= -1;
     }
     console.log("remove dot", currentAction.rdot);
     for(const irdot of currentAction.rdot){
       for(const dot of dots){
-        if(Number(dot.getAttribute('cx')) === irdot.x && Number(dot.getAttribute('cy')) === irdot.y){
+        if(Number(dot.getAttribute('cx')) === irdot.x &amp;&amp; Number(dot.getAttribute('cy')) === irdot.y){
           removeDotFromSvg(dot);
         }
       }
     }
   }
-  if ("aline" in currentAction && currentAction.aline.length != 0){
+  if ("aline" in currentAction &amp;&amp; currentAction.aline.length != 0){
     for(const line of currentAction.aline){
       if(line.c === "support") continue;
-      if(line.y1 < 0) line.y1 *= -1;
-      if(line.y2 < 0) line.y2 *= -1;
+      if(line.y1 &lt; 0) line.y1 *= -1;
+      if(line.y2 &lt; 0) line.y2 *= -1;
     }
     console.log("add line", currentAction.aline);
     for(const line of currentAction.aline){
@@ -956,32 +984,32 @@ nxtbtn.addEventListener("click", function() {
       addLineToSvg(line.x1, line.y1, line.x2, line.y2, line.c);
     }
   } 
-  if ("rline" in currentAction && currentAction.rline.length != 0) {
+  if ("rline" in currentAction &amp;&amp; currentAction.rline.length != 0) {
     for(const line of currentAction.rline){
       if(line.c === "support") continue;
-      if(line.y1 < 0) line.y1 *= -1;
-      if(line.y2 < 0) line.y2 *= -1;
+      if(line.y1 &lt; 0) line.y1 *= -1;
+      if(line.y2 &lt; 0) line.y2 *= -1;
     }
     console.log("remove line", currentAction.rline);
     const lines = document.getElementsByTagName("line");
     for(const irline of currentAction.rline){
       for(const line of lines){
-        if(Number(line.getAttribute('x1')) === irline.x1 && Number(line.getAttribute('y1')) === irline.y1 && Number(line.getAttribute('x2')) === irline.x2 && Number(line.getAttribute('y2')) === irline.y2 && line.classList.contains(irline.c)){
+        if(Number(line.getAttribute('x1')) === irline.x1 &amp;&amp; Number(line.getAttribute('y1')) === irline.y1 &amp;&amp; Number(line.getAttribute('x2')) === irline.x2 &amp;&amp; Number(line.getAttribute('y2')) === irline.y2 &amp;&amp; line.classList.contains(irline.c)){
           removeLineFromSvg(line);
         }
       }
     }
   }
-  if ("cdot" in currentAction && currentAction.cdot.length != 0) {
+  if ("cdot" in currentAction &amp;&amp; currentAction.cdot.length != 0) {
     for(const dot of currentAction.cdot){
-      if(dot.y < 0) dot.y *= -1;
+      if(dot.y &lt; 0) dot.y *= -1;
     }
     console.log("change class dot", currentAction.cdot);
     const dots = document.getElementsByTagName("circle");
     const dots2 = [...dots];
     for(const icdot of currentAction.cdot){
       for(const dot of dots2){
-        if(Number(dot.getAttribute('cx')) === icdot.x && Number(dot.getAttribute('cy')) === icdot.y){
+        if(Number(dot.getAttribute('cx')) === icdot.x &amp;&amp; Number(dot.getAttribute('cy')) === icdot.y){
           removeDotFromSvg(dot)
           addPointToSvg(icdot.x, icdot.y, icdot.c);
           // dot.setAttribute("class", icdot.c);
@@ -1022,9 +1050,9 @@ prevbtn.addEventListener("click", function() {
   } else {
     textc.innerHTML = currentAction.instr;
   }
-  if ("rdot" in currentAction && currentAction.rdot.length != 0){
+  if ("rdot" in currentAction &amp;&amp; currentAction.rdot.length != 0){
     for(const dot of currentAction.rdot){
-      if(dot.y < 0) dot.y *= -1;
+      if(dot.y &lt; 0) dot.y *= -1;
     }
     console.log("add dot", currentAction.rdot);
     for(const dot of currentAction.rdot){
@@ -1032,27 +1060,27 @@ prevbtn.addEventListener("click", function() {
       addPointToSvg(dot.x, dot.y, dot.c);
     }
   } 
-  if ("adot" in currentAction && currentAction.adot.length != 0) {
+  if ("adot" in currentAction &amp;&amp; currentAction.adot.length != 0) {
     const dots = document.getElementsByTagName("circle");
     console.log(dots);
     for(const dot of currentAction.adot){
-      if(dot.y < 0) dot.y *= -1;
+      if(dot.y &lt; 0) dot.y *= -1;
     }
     console.log("remove dot", currentAction.adot);
     for(const irdot of currentAction.adot){
       for(const dot of dots){
-        if(Number(dot.getAttribute('cx')) === irdot.x && Number(dot.getAttribute('cy')) === irdot.y){
+        if(Number(dot.getAttribute('cx')) === irdot.x &amp;&amp; Number(dot.getAttribute('cy')) === irdot.y){
           console.log(dot);
           dot.remove();
         }
       }
     }
   }
-  if ("rline" in currentAction && currentAction.rline.length != 0){
+  if ("rline" in currentAction &amp;&amp; currentAction.rline.length != 0){
     for(const line of currentAction.rline){
       if(line.c === "support") continue;
-      if(line.y1 < 0) line.y1 *= -1;
-      if(line.y2 < 0) line.y2 *= -1;
+      if(line.y1 &lt; 0) line.y1 *= -1;
+      if(line.y2 &lt; 0) line.y2 *= -1;
     }
     console.log("add line", currentAction.rline);
     for(const line of currentAction.rline){
@@ -1060,32 +1088,32 @@ prevbtn.addEventListener("click", function() {
       addLineToSvg(line.x1, line.y1, line.x2, line.y2, line.c);
     }
   } 
-  if ("aline" in currentAction && currentAction.aline.length != 0) {
+  if ("aline" in currentAction &amp;&amp; currentAction.aline.length != 0) {
     for(const line of currentAction.aline){
       if(line.c === "support") continue;
-      if(line.y1 < 0) line.y1 *= -1;
-      if(line.y2 < 0) line.y2 *= -1;
+      if(line.y1 &lt; 0) line.y1 *= -1;
+      if(line.y2 &lt; 0) line.y2 *= -1;
     }
     console.log("remove line", currentAction.aline);
     const lines = document.getElementsByTagName("line");
     for(const irline of currentAction.aline){
       for(const line of lines){
-        if(Number(line.getAttribute('x1')) === irline.x1 && Number(line.getAttribute('y1')) === irline.y1 && Number(line.getAttribute('x2')) === irline.x2 && Number(line.getAttribute('y2')) === irline.y2 && line.classList.contains(irline.c)){
+        if(Number(line.getAttribute('x1')) === irline.x1 &amp;&amp; Number(line.getAttribute('y1')) === irline.y1 &amp;&amp; Number(line.getAttribute('x2')) === irline.x2 &amp;&amp; Number(line.getAttribute('y2')) === irline.y2 &amp;&amp; line.classList.contains(irline.c)){
           console.log(line);
           line.remove();
         }
       }
     }
   }
-  if ("cdot" in currentAction && currentAction.cdot.length != 0) {
+  if ("cdot" in currentAction &amp;&amp; currentAction.cdot.length != 0) {
     for(const dot of currentAction.cdot){
-      if(dot.y < 0) dot.y *= -1;
+      if(dot.y &lt; 0) dot.y *= -1;
     }
     console.log("change class dot", currentAction.cdot);
     const dots = document.getElementsByTagName("circle");
     for(const icdot of currentAction.cdot){
       for(const dot of dots){
-        if(Number(dot.getAttribute('cx')) === icdot.x && Number(dot.getAttribute('cy')) === icdot.y){
+        if(Number(dot.getAttribute('cx')) === icdot.x &amp;&amp; Number(dot.getAttribute('cy')) === icdot.y){
           console.log(dot);
           dot.setAttribute("class", icdot.pc);
         }
@@ -1097,3 +1125,26 @@ prevbtn.addEventListener("click", function() {
     convexHull.length = 0;
   }
 });
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ACTIONS">ACTIONS</a></li><li><a href="global.html#actionHistory">actionHistory</a></li><li><a href="global.html#addLineToSvg">addLineToSvg</a></li><li><a href="global.html#addPointToSvg">addPointToSvg</a></li><li><a href="global.html#afile">afile</a></li><li><a href="global.html#afilebtn">afilebtn</a></li><li><a href="global.html#arandom">arandom</a></li><li><a href="global.html#clickKara">clickKara</a></li><li><a href="global.html#convexHull">convexHull</a></li><li><a href="global.html#crossProduct">crossProduct</a></li><li><a href="global.html#currentStep">currentStep</a></li><li><a href="global.html#distance">distance</a></li><li><a href="global.html#getSlope">getSlope</a></li><li><a href="global.html#getSupportingLine">getSupportingLine</a></li><li><a href="global.html#kps">kps</a></li><li><a href="global.html#nxtbtn">nxtbtn</a></li><li><a href="global.html#parseJsonFile">parseJsonFile</a></li><li><a href="global.html#points">points</a></li><li><a href="global.html#prevbtn">prevbtn</a></li><li><a href="global.html#removeDotFromSvg">removeDotFromSvg</a></li><li><a href="global.html#removeLineFromSvg">removeLineFromSvg</a></li><li><a href="global.html#skipbtn">skipbtn</a></li><li><a href="global.html#skipendbtn">skipendbtn</a></li><li><a href="global.html#svg">svg</a></li><li><a href="global.html#svgClickListener">svgClickListener</a></li><li><a href="global.html#svg_container">svg_container</a></li><li><a href="global.html#toggleSvgClickListener">toggleSvgClickListener</a></li><li><a href="global.html#upper_bridge">upper_bridge</a></li><li><a href="global.html#upper_hull">upper_hull</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Apr 02 2024 16:05:30 GMT+0530 (India Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
