@@ -179,7 +179,7 @@ arandom.addEventListener("click", function () {
   const svgX = 50;
   const svgY = 50;
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 500; i++) {
     const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
     const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
     addPointToSvg(x, y); // Call the existing function to add a point to the SVG
@@ -248,12 +248,14 @@ function getSlope(point1, point2) {
  * @memberof Kirkpatrick-Seidel
  */
 function kps(points) {
-  // kps doesn't sort input points, we do so for simplicity of implementation
-  points.sort(function (a, b) {
-    return a.x - b.x || b.y - a.y;
-  });
-  const pmin = points[0];
-  const pmax = points[points.length - 1];
+  var pmin = points[0];
+  var pmax = points[0];
+  for(const point of points){
+    if(point.x < pmin.x)
+      pmin = point;
+    else if(point.x > pmax.x)
+      pmax = point;
+  }
   const upperHull = [];
   var lowerHull = [];
   // find pumin
@@ -415,6 +417,7 @@ function upper_hull(pmin, pmax, T) {
   if (pmin.x === pmax.x && pmin.y === pmax.y) {
     return [];
   }
+  // KPS does not sort here, we do so to make the task of finding the median simpler. We can use the median of medians method to find the median in O(n) time
   T.sort(function (a, b) {
     return a.x - b.x || b.y - a.y;
   });
@@ -581,6 +584,7 @@ function upper_hull(pmin, pmax, T) {
  * @memberof Kirkpatrick-Seidel
  */
 function upper_bridge(S, L) {
+  // KPS does not sort here, we do so to make the task of finding the median simpler. We can use the median of medians method to find the median in O(n) time
   S.sort(function (a, b) {
     return a.x - b.x || b.y - a.y;
   });
@@ -651,6 +655,7 @@ function upper_bridge(S, L) {
   });
   // Calculate the median slope
   let slopes = pairs.map((pair) => pair.k);
+  // KPS does not sort here, we do so to make the task of finding the median simpler. We can use the median of medians method to find the median in O(n) time
   slopes.sort((a, b) => a - b);
   let medianSlope = slopes[Math.floor(slopes.length / 2)];
 
