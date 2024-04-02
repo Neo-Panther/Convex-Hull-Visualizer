@@ -113,6 +113,10 @@ afile.addEventListener('change', function (event) {
          */
         addPointToSvg({ clientX: point.x + 150, clientY: point.y + 150});
       }
+      if(points.length >= 3){
+        nxtbtn.disabled = false;
+        skipendbtn.disabled = false;
+      }
     });
   }
 });
@@ -123,6 +127,7 @@ afile.addEventListener('change', function (event) {
  */
 skipendbtn.addEventListener('click', function(){
   afilebtn.disabled = true;
+  arandom.disabled = true;
   while(!nxtbtn.disabled){
     nxtbtn.click();
   }
@@ -189,7 +194,7 @@ function toggleSvgClickListener(enable) {
   if (enable) {
     svgClickListener = function (event) {
       addPointToSvg(event);
-      if(points.length === 3){
+      if(points.length >= 3){
         nxtbtn.disabled = false;
         skipendbtn.disabled = false;
       }

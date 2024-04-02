@@ -70,6 +70,11 @@ afile.addEventListener('change', function (event) {
         points.push(point);
         addPointToSvg(point.x, point.y);
       }
+      if(points.length >= 3){
+        nxtbtn.disabled = false;
+        skipbtn.disabled = false;
+        skipendbtn.disabled = false;
+      }
     });
   }
 });
@@ -124,9 +129,13 @@ skipendbtn.addEventListener('click', function(){
   nxtbtn.disabled = true;
   skipbtn.disabled = true;
   skipendbtn.disabled = true;
+  afilebtn.disabled = true;
+  arandom.disabled = true;
   prevbtn.disabled = false;
   ACTIONS.length = 0;
-  kps(points);
+  convexHull.length = 0;
+  console.log("kps points");
+  console.log(...kps(points));
   const lines = document.getElementsByTagName("line");
   const dots = document.getElementsByTagName("circle");
   for(const dot of dots)
@@ -219,6 +228,7 @@ function kps(points) {
     instr: "Let us now focus on the upper hull points"
   });
   ans.push(...upper_hull(pumin, pumax, upperHull));
+  ans.push(pumax, plmax);
   const newLowerHull = [];
   for (const point of lowerHull) {
     newLowerHull.push({ x: point.x, y: -point.y });
@@ -253,9 +263,7 @@ function kps(points) {
   for (const point of temp) {
     ans.push({ x: point.x, y: -point.y });
   }
-  if (ans.length == 0) {
-    ans.push(pumax, plmax);
-  }
+  ans.push(plmin, pumin);
   ACTIONS.push({
     adot: points.filter((point) => {
       for (const p of ans) {
@@ -265,8 +273,44 @@ function kps(points) {
       }
       return 1;
     }),
+    aline : [{
+      x1: pumax
+    },],
     instr: "We return all original points after finding the lower hull"
   });
+  if(pumin.y !== plmin.y || pumax.y !== plmax.y){
+    ACTIONS.push({
+      aline: [{
+        x1: pumax.x,
+        y1: pumax.y,
+        x2: plmax.x,
+        y2: plmax.y,
+        c: "hull"
+      },
+      {
+        x1: plmin.x,
+        y1: plmin.y,
+        x2: pumin.x,
+        y2: pumin.y,
+        c: "hull"
+      }],
+      instr: "We connect the upper and lower hulls"
+    });
+    convexHull.push({
+      x1: pumax.x,
+      y1: pumax.y,
+      x2: plmax.x,
+      y2: plmax.y,
+      c: "hull"
+    },
+    {
+      x1: plmin.x,
+      y1: plmin.y,
+      x2: pumin.x,
+      y2: pumin.y,
+      c: "hull"
+    });
+  }
   return [
     ...new Map(ans.map((point) => [`${point.x}:${point.y}`, point])).values(),
   ];
@@ -781,7 +825,7 @@ svg.addEventListener("click", function(event) {
   }
   const off = svg_container.getBoundingClientRect();
   points.push({ x: event.clientX - off.left, y: event.clientY - off.top });
-  if(points.length === 3){
+  if(points.length >= 3){
     nxtbtn.disabled = false;
     skipbtn.disabled = false;
     skipendbtn.disabled = false;
@@ -1001,5 +1045,6 @@ prevbtn.addEventListener("click", function() {
   }
   if(clickKara===0){
     ACTIONS.length = 0;
+    convexHull.length = 0;
   }
 });
