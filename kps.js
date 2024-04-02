@@ -1,7 +1,5 @@
 const points = [];
 let convexHull = [];
-let actionHistory = []; // Array to store the history of actions
-let currentStep = "drawLines"; // Track the current step of the algorithm
 const svg_container = document.getElementsByClassName("svg-container")[0];
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 const nxtbtn = document.getElementById("next-button");
@@ -14,32 +12,51 @@ const afile = document.getElementById("points-file");
 svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
+/**
+ * Action object [{}]<br>
+ * adot : {x: number, y: number, c: class}[]  // add these dots<br>
+ * rdot : {x: number, y: number}[]  // remove these dots<br>
+ * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  <br>
+ * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines<br>
+ * cdot : {x: number, y: number, c: class, pc: class}[]  // change dot class<br>
+ * instr: "instruction to show"<br>
+ * class => string<br>
+*/
 const ACTIONS = [];
 var clickKara = 0;
 const textc = document.getElementById('text-container-left');
-/**
- * Action object [{}]
- * adot : {x: number, y: number, c: class}[]  // add these dots
- * rdot : {x: number, y: number}[]  // remove these dots
- * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // add these lines
- * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines
- * cdot : {x: number, y: number, c: class, pc: class}[]  // change dot class
- * instr: "instruction to show"
- * class => string
-*/
 
+
+/**
+ * Parses a JSON file asynchronously.
+ * @param {File} file - The JSON file to parse.
+ * @returns {Promise<any>} A promise that resolves with the parsed JSON data.
+ */
 async function parseJsonFile(file) {
   return new Promise((resolve, reject) => {
-    const fileReader = new FileReader()
-    fileReader.onload = event => resolve(JSON.parse(event.target.result))
-    fileReader.onerror = error => reject(error)
-    fileReader.readAsText(file)
-  })
+    const fileReader = new FileReader();
+    fileReader.onload = event => resolve(JSON.parse(event.target.result));
+    fileReader.onerror = error => reject(error);
+    fileReader.readAsText(file);
+  });
 }
+
 // Get Points from file
+/**
+ * Attaches a click event listener to a button element that triggers a click event on a file input element.
+ * 
+ * @param {HTMLElement} buttonElement - The button element to which the click event listener will be attached.
+ * @param {HTMLElement} fileInputElement - The file input element that will be clicked when the button is clicked.
+ */
 afilebtn.addEventListener("click", function() {
   afile.click();
 });
+/**
+ * Attaches a change event listener to a file input element, which triggers when files are selected.
+ * It reads the selected JSON files, parses them, scales the points, and adds them to an SVG.
+ * 
+ * @param {Event} event - The change event triggered by selecting files in the file input element.
+ */
 afile.addEventListener('change', function (event) {
   const files = event.target.files;
   for(const file of files){
@@ -56,11 +73,19 @@ afile.addEventListener('change', function (event) {
     });
   }
 });
-// Clear button functionality
+/**
+ * Attaches a click event listener to the clear button element.
+ * When clicked, it reloads the current page, effectively clearing its content.
+ */
 document.getElementById("clear-button").addEventListener("click", function () {
   location.reload(); // Reload the page
 });
 // Random points function
+/**
+ * Attaches a click event listener to the "Random" button element.
+ * When clicked, it generates random points within the SVG container and adds them to the SVG.
+ * It also enables certain navigation buttons.
+ */
 arandom.addEventListener("click", function () {
   skipbtn.disabled = false;
   skipendbtn.disabled = false;
@@ -78,12 +103,23 @@ arandom.addEventListener("click", function () {
   }
 });
 // Skip steps for faster completion
+/**
+ * Attaches a click event listener to the "Skip" button element.
+ * When clicked, it triggers a click event on the "Next" button element five times.
+ */
 skipbtn.addEventListener("click", function(){
   for(var i = 0; i < 5; i++)
     nxtbtn.click();
 });
 
 //skip to completed hull
+/**
+ * Attaches a click event listener to the "Skip to End" button element.
+ * When clicked, it disables the "Next", "Skip", and "Skip to End" buttons,
+ * enables the "Previous" button, clears the ACTIONS array, invokes the kps function with the points array,
+ * iterates through the convexHull array, adding lines to the SVG based on the hull points,
+ * and sets the clickKara variable to the length of the ACTIONS array.
+ */
 skipendbtn.addEventListener('click', function(){
   nxtbtn.disabled = true;
   skipbtn.disabled = true;
@@ -91,16 +127,35 @@ skipendbtn.addEventListener('click', function(){
   prevbtn.disabled = false;
   ACTIONS.length = 0;
   kps(points);
+  const lines = document.getElementsByTagName("line");
+  const dots = document.getElementsByTagName("circle");
+  for(const dot of dots)
+    removeDotFromSvg(dot);
+  for(const line of lines)
+    removeLineFromSvg(line);
+  for(const point of points)
+    addPointToSvg(point.x, point.y);
   for(const hull of convexHull){
     addLineToSvg(hull.x1, (hull.y1 >= 0)? hull.y1: -hull.y1, hull.x2, (hull.y2 >= 0)? hull.y2: -hull.y2, "hull");
   }
   clickKara = ACTIONS.length;
 });
-
+/**
+ * Calculates the slope of a line passing through two points.
+ * @param {Object} point1 - The first point with x and y coordinates.
+ * @param {Object} point2 - The second point with x and y coordinates.
+ * @returns {number} - The slope of the line passing through the two points.
+ */
 function getSlope(point1, point2) {
   return (point1.y - point2.y) / (point2.x - point1.x);
 }
-
+/**
+ * Finds the convex hull of a set of points using the Kirkpatrick-Seidel algorithm.
+ * This algorithm sorts the points lexicographically by x then y coordinates,
+ * identifies the extreme points, and then constructs the upper and lower hulls.
+ * @param {Object[]} points - An array of points with x and y coordinates.
+ * @returns {Object[]} - An array of points representing the convex hull.
+ */
 function kps(points) {
   points.sort(function (a, b) {
     return a.x - b.x || b.y - a.y;
@@ -216,7 +271,18 @@ function kps(points) {
     ...new Map(ans.map((point) => [`${point.x}:${point.y}`, point])).values(),
   ];
 }
-
+/**
+ * Computes the upper hull of a set of points given a dividing line.
+ * 
+ * This function calculates the upper hull of a set of points T with respect to a dividing line 
+ * defined by pmin and pmax. It recursively divides the points into left and right halves, and 
+ * computes the upper hull for each half.
+ * 
+ * @param {Object} pmin - The leftmost point of the hull.
+ * @param {Object} pmax - The rightmost point of the hull.
+ * @param {Object[]} T - The set of points to compute the upper hull from.
+ * @returns {Object[]} - An array of points representing the upper hull.
+ */
 function upper_hull(pmin, pmax, T) {
   if (pmin.x === pmax.x && pmin.y === pmax.y) {
     return [];
@@ -374,7 +440,17 @@ function upper_hull(pmin, pmax, T) {
   });
   return ans;
 }
-
+/**
+ * Computes the upper bridge of a set of points with respect to a given dividing line.
+ * 
+ * This function calculates the upper bridge of a set of points S with respect to a given dividing 
+ * line defined by L. It recursively divides the points into smaller subsets and determines the upper
+ * bridge based on certain conditions.
+ * 
+ * @param {Object[]} S - The set of points to compute the upper bridge from.
+ * @param {number} L - The x-coordinate of the dividing line.
+ * @returns {Object[]} - An array containing two points representing the upper bridge.
+ */
 function upper_bridge(S, L) {
   S.sort(function (a, b) {
     return a.x - b.x || b.y - a.y;
@@ -587,7 +663,18 @@ function upper_bridge(S, L) {
   });
   return ans;
 }
-
+/**
+ * Calculates the equation of a supporting line with the given slope and intercept.
+ * 
+ * This function determines the equation of a supporting line with a specified slope and
+ * intercept. The supporting line is used in the upper bridge computation algorithm to
+ * partition the points into left and right subsets.
+ * 
+ * @param {number} medianSlope - The slope of the supporting line.
+ * @param {number} intercept - The y-intercept of the supporting line.
+ * @param {boolean} islower - Indicates whether the supporting line is lower or upper.
+ * @returns {Object} - An object representing the equation of the supporting line.
+ */
 function getSupportingLine(medianSlope, intercept, islower) {
   const h = svg.height.animVal.value, w = svg.width.animVal.value;
   return {
@@ -600,6 +687,18 @@ function getSupportingLine(medianSlope, intercept, islower) {
 }
 
 // Add a point to the SVG
+/**
+ * Adds a point to the SVG container.
+ * 
+ * This function creates a new SVG circle element representing a point and appends it
+ * to the SVG container. It sets the coordinates of the point based on the provided
+ * x and y coordinates. Optionally, a class can be provided to customize the appearance
+ * of the point.
+ * 
+ * @param {number} x - The x-coordinate of the point.
+ * @param {number} y - The y-coordinate of the point.
+ * @param {string} [c] - The class attribute for styling the point (optional).
+ */
 function addPointToSvg(x, y, c) {
   const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
   dot.setAttribute("cx", x);
@@ -608,7 +707,20 @@ function addPointToSvg(x, y, c) {
   svg.appendChild(dot);
   console.log("element=", dot);
 }
-
+/**
+ * Adds a line to the SVG container.
+ * 
+ * This function creates a new SVG line element representing a line segment and appends it
+ * to the SVG container. It sets the coordinates of the line segment based on the provided
+ * (x1, y1) and (x2, y2) coordinates. Optionally, a class can be provided to customize the appearance
+ * of the line segment.
+ * 
+ * @param {number} x1 - The x-coordinate of the starting point of the line.
+ * @param {number} y1 - The y-coordinate of the starting point of the line.
+ * @param {number} x2 - The x-coordinate of the ending point of the line.
+ * @param {number} y2 - The y-coordinate of the ending point of the line.
+ * @param {string} [c] - The class attribute for styling the line (optional).
+ */
 function addLineToSvg(x1, y1, x2, y2, c){
   const line = document.createElementNS(
     "http://www.w3.org/2000/svg",
@@ -622,7 +734,16 @@ function addLineToSvg(x1, y1, x2, y2, c){
   svg.appendChild(line);
   console.log("element=", line);
 }
-
+/**
+ * Removes a dot element from the SVG container.
+ * 
+ * This function removes a dot element from the SVG container by animating its removal.
+ * It creates a clone of the dot element, reverses the animation direction, and sets the animation
+ * fill mode to "backwards" to make the animation appear as if the dot is shrinking. After a delay,
+ * the cloned dot element is removed from the SVG container.
+ * 
+ * @param {Element} dot - The dot element to be removed from the SVG container.
+ */
 function removeDotFromSvg(dot){
   var newdot = dot.cloneNode(true);
   newdot.style.animationDirection = "reverse";
@@ -630,6 +751,16 @@ function removeDotFromSvg(dot){
   dot.parentNode.replaceChild(newdot, dot);
   setTimeout(function() {newdot.remove()}, 460);
 }
+/**
+ * Removes a line element from the SVG container.
+ * 
+ * This function removes a line element from the SVG container by animating its removal.
+ * It creates a clone of the line element, reverses the animation direction, and sets the animation
+ * fill mode to "backwards" to make the animation appear as if the line is shrinking. After a delay,
+ * the cloned line element is removed from the SVG container.
+ * 
+ * @param {Element} line - The line element to be removed from the SVG container.
+ */
 function removeLineFromSvg(line){
   var newline = line.cloneNode(true);
   newline.style.animationDirection = "reverse";
@@ -637,7 +768,11 @@ function removeLineFromSvg(line){
   line.parentNode.replaceChild(newline, line);
   setTimeout(function() {newline.remove()}, 360);
 }
-
+/**
+ * Event listener for clicking on the SVG container to add a point.
+ * 
+ * @param {MouseEvent} event - The mouse event object.
+ */
 svg.addEventListener("click", function(event) {
   // dont remove this idiot
   if(svg.classList.contains("running")){
@@ -653,7 +788,21 @@ svg.addEventListener("click", function(event) {
   }
   addPointToSvg(event.clientX - off.left, event.clientY - off.top, "");
 });
-
+/**
+ * Event listener for the "Next" button click, which proceeds to the next algorithm step.
+ * If it's the first click, it disables further inputs, adds the "running" class to the SVG element,
+ * logs the answer obtained from the kps function, and sets up the current action.
+ * It increments the click counter and checks if it exceeds the total number of actions.
+ * If it does, it disables the "Next" button, the "Skip" button, and the "Skip to End" button,
+ * decrements the click counter, and exits the function.
+ * Otherwise, it retrieves the current action from the actions array, updates the instruction text,
+ * and executes actions based on the action type:
+ * - If "adot" exists and is not empty, it adds dots to the SVG element based on the action data.
+ * - If "rdot" exists and is not empty, it removes dots from the SVG element based on the action data.
+ * - If "aline" exists and is not empty, it adds lines to the SVG element based on the action data.
+ * - If "rline" exists and is not empty, it removes lines from the SVG element based on the action data.
+ * - If "cdot" exists and is not empty, it changes the class of dots in the SVG element based on the action data.
+ */
 nxtbtn.addEventListener("click", function() {
   if(clickKara === 0) {
     // Disable further inputs
@@ -748,7 +897,21 @@ nxtbtn.addEventListener("click", function() {
     }
   }
 });
-
+/**
+ * Event listener for the "Previous" button click, which navigates to the previous algorithm step.
+ * If the "Next" button is disabled, it enables the "Skip" button, the "Next" button, and the "Skip to End" button.
+ * Decrements the click counter and retrieves the current action based on the click counter.
+ * If the click counter reaches 0, it disables the "Previous" button, enables further inputs,
+ * removes the "running" class from the SVG element, and updates the instruction text.
+ * Otherwise, it updates the instruction text with the current action.
+ * It then executes actions based on the action type:
+ * - If "rdot" exists and is not empty, it adds dots to the SVG element based on the action data.
+ * - If "adot" exists and is not empty, it removes dots from the SVG element based on the action data.
+ * - If "rline" exists and is not empty, it adds lines to the SVG element based on the action data.
+ * - If "aline" exists and is not empty, it removes lines from the SVG element based on the action data.
+ * - If "cdot" exists and is not empty, it changes the class of dots in the SVG element based on the action data.
+ * If the click counter reaches 0, it clears the actions array.
+ */
 prevbtn.addEventListener("click", function() {
   if(nxtbtn.disabled) {
     skipbtn.disabled = false;
