@@ -1,31 +1,39 @@
+/** @module Jarvis-March */
+
 /**
  * This array stores the points for the convex hull algorithm.
  * @type {Array}
+ * @memberof Jarvis-March
  */
 const points = [];
 /**
  * This array stores the points that make up the convex hull.
  * @type {Array}
+ * @memberof Jarvis-March
  */
 let convexHull = [];
 /**
  * This array stores the history of actions for the convex hull algorithm.
  * @type {Array}
+ * @memberof Jarvis-March
  */
 let actionHistory = [];
 /**
  * This variable tracks the current step of the convex hull algorithm.
  * @type {string}
+ * @memberof Jarvis-March
  */
 let currentStep = "drawLines";
 /**
  * This variable stores the SVG container element.
  * @type {HTMLElement}
+ * @memberof Jarvis-March
  */
 const svg_container = document.getElementsByClassName("svg-container")[0];
 /**
  * This variable stores the SVG element.
  * @type {SVGElement}
+ * @memberof Jarvis-March
  */
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 svg_container.appendChild(svg);
@@ -34,16 +42,19 @@ svg.setAttribute("height", "100%");
 /**
  * This array stores the actions for the convex hull algorithm.
  * @type {Array}
+ * @memberof Jarvis-March
  */
 const ACTIONS = [];
 /**
  * This variable stores the number of clicks.
  * @type {number}
+ * @memberof Jarvis-March
  */
 let clickKara = 0;
 /**
  * This variable stores the SVG click listener.
  * @type {EventListener}
+ * @memberof Jarvis-March
  */
 let svgClickListener = null;
 const arandom = document.getElementById("add-random-button");
@@ -54,16 +65,22 @@ const afilebtn = document.getElementById("get-file");
 const afile = document.getElementById("points-file");
 
 /**
- * This is an asynchronous function that parses a JSON file.<br>
- * It uses the FileReader API to read the content of the file and then parses it into a JavaScript object.<br>
- * The function returns a Promise that resolves with the parsed object if the reading and parsing are successful.<br>
+ * This is an asynchronous function that parses a JSON file.
+ *
+ * It uses the FileReader API to read the content of the file and then parses it into a JavaScript object.
+ *
+ * The function returns a Promise that resolves with the parsed object if the reading and parsing are successful.
+ *
  * If there is an error during the reading process, the Promise is rejected with the error.
  *
- * @param {File} file - The file to be parsed. This should be a File object representing a JSON file.<br>
+ * @param {File} file - The file to be parsed. This should be a File object representing a JSON file.
+ *
  * The File object represents a file in a file system and provides methods to access the file's content.
  *
- * @return {Promise<Object>} A Promise that resolves to the parsed JavaScript object if the reading and parsing are successful.<br>
+ * @return {Promise<Object>} A Promise that resolves to the parsed JavaScript object if the reading and parsing are successful.
+ *
  * If there is an error during the reading process, the Promise is rejected with the error.
+ * @memberof Jarvis-March
  */
 async function parseJsonFile(file) {
   return new Promise((resolve, reject) => {
@@ -75,42 +92,45 @@ async function parseJsonFile(file) {
 }
 
 /**
- * This event listener is triggered when the 'afilebtn' button is clicked.<br>
- * It programmatically triggers a click event on the hidden file input element 'afile'.<br>
+ * This event listener is triggered when the 'afilebtn' button is clicked.
+ *
+ * It programmatically triggers a click event on the hidden file input element 'afile'.
+ *
  * This allows the user to select a file from their system's file picker dialog.
+ * @memberof Jarvis-March
  */
 afilebtn.addEventListener("click", function() {
   afile.click();
 });
 /**
- * This event listener is triggered when a file is selected via the 'afile' input element.<br>
- * It reads the selected files and parses each one as JSON using the 'parseJsonFile' function.<br>
+ * This event listener is triggered when a file is selected via the 'afile' input element.
+ *
+ * It reads the selected files and parses each one as JSON using the 'parseJsonFile' function.
+ *
  * The parsed points are then converted to a new format and added to the SVG.
  *
  * @param {Event} event - The change event object. This object contains information about the event, including the selected files.
+ * @memberof Jarvis-March
  */
 afile.addEventListener('change', function (event) {
   const files = event.target.files;
   for(const file of files){
     /**
-     * The 'parseJsonFile' function is called with the current file.<br>
-     * It returns a Promise that resolves with the parsed points from the file.<br>
+     * The 'parseJsonFile' function is called with the current file.
+ *
+     * It returns a Promise that resolves with the parsed points from the file.
+ *
      * The points are then converted to a new format and added to the SVG.
      *
      * @param {File} file - The current file being processed. This should be a JSON file containing an array of points.
-     */
+     * @memberof Jarvis-March
+ */
     parseJsonFile(file).then(function(fpoints) {
       const npoints = [];
       for(const point of fpoints){
         npoints.push({x: Number(point.x), y: Number(point.y)});
       }
       for(const point of npoints){
-         /**
-         * The 'addPointToSvg' function is called with the current point.<br>
-         * It adds the point to the SVG at the specified coordinates.
-         *
-         * @param {Object} point - The current point being processed. This object should have 'x' and 'y' properties representing the point's coordinates.
-         */
         addPointToSvg({ clientX: point.x + 150, clientY: point.y + 150});
       }
       if(points.length >= 3){
@@ -121,9 +141,12 @@ afile.addEventListener('change', function (event) {
   }
 });
 /**
- * This event listener is triggered when the 'skipendbtn' button is clicked.<br>
- * It disables the 'afilebtn' button and programmatically triggers click events on the 'nxtbtn' button until it is disabled.<br>
+ * This event listener is triggered when the 'skipendbtn' button is clicked.
+ *
+ * It disables the 'afilebtn' button and programmatically triggers click events on the 'nxtbtn' button until it is disabled.
+ *
  * This effectively skips to the end of a certain process (e.g., a step-by-step visualization).
+ * @memberof Jarvis-March
  */
 skipendbtn.addEventListener('click', function(){
   afilebtn.disabled = true;
@@ -133,18 +156,25 @@ skipendbtn.addEventListener('click', function(){
   }
 });
 /**
- * This event listener is triggered when the 'clear-button' button is clicked.<br>
- * It reloads the page, effectively resetting the state of the application.<br>
+ * This event listener is triggered when the 'clear-button' button is clicked.
+ *
+ * It reloads the page, effectively resetting the state of the application.
+ *
  * This can be used to clear the current data or visualization and start over.
+ * @memberof Jarvis-March
  */
 document.getElementById("clear-button").addEventListener("click", function () {
   location.reload(); // Reload the page
 });
 /**
- * This event listener is triggered when the 'arandom' button is clicked.<br>
- * It generates a set of random points within the SVG container and adds them to the SVG.<br>
- * The 'nxtbtn' and 'skipendbtn' buttons are enabled, allowing the user to proceed with the next steps of the application.<br>
+ * This event listener is triggered when the 'arandom' button is clicked.
+ *
+ * It generates a set of random points within the SVG container and adds them to the SVG.
+ *
+ * The 'nxtbtn' and 'skipendbtn' buttons are enabled, allowing the user to proceed with the next steps of the application.
+ *
  * The SVG container's dimensions and position are used to ensure that the points are generated within its bounds.
+ * @memberof Jarvis-March
  */
 arandom.addEventListener("click", function () {
     const svgContainer = document.querySelector(".svg-container");
@@ -156,10 +186,6 @@ arandom.addEventListener("click", function () {
     nxtbtn.disabled = false;
     skipendbtn.disabled = false;
     for (let i = 0; i < 5; i++) {
-      /**
-       * A random x and y coordinate within the SVG container is generated for each point.<br>
-       * The 'addPointToSvg' function is then called with these coordinates to add the point to the SVG.
-       */
       const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
       const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
       addPointToSvg({ clientX: x, clientY: y }); // Call the existing function to add a point to the SVG
@@ -169,6 +195,7 @@ arandom.addEventListener("click", function () {
 /**
  * Function to add a point to the SVG.
  * @param {Event} event - The event object containing the clientX and clientY properties.
+ * @memberof Jarvis-March
  */
 function addPointToSvg(event) {
   const x = event.clientX,
@@ -189,6 +216,7 @@ function addPointToSvg(event) {
 /**
  * Function to enable or disable the SVG click listener.
  * @param {boolean} enable - If true, adds the click listener. If false, removes the click listener.
+ * @memberof Jarvis-March
  */
 function toggleSvgClickListener(enable) {
   if (enable) {
@@ -204,10 +232,7 @@ function toggleSvgClickListener(enable) {
     svg.removeEventListener("click", svgClickListener);
   }
 }
-/**
- * If 'clickKara' is 0, the SVG click listener is enabled.
- * This allows the user to add points to the SVG by clicking on it.
- */
+// If 'clickKara' is 0, the SVG click listener is enabled.
 if (clickKara === 0) {
   toggleSvgClickListener(true);
 }
@@ -217,6 +242,7 @@ if (clickKara === 0) {
  * This prevents the user from adding more points or changing the set of points while the convex hull is being computed.
  * If the 'convexHull' array is empty, it sorts the 'points' array by x-coordinate and then by y-coordinate, and adds the first point to the 'convexHull' array.
  * This prepares the points for the computation of the convex hull.
+ * @memberof Jarvis-March
  */
 nxtbtn.addEventListener("click", function () {
   clickKara = 1;
@@ -243,6 +269,8 @@ nxtbtn.addEventListener("click", function () {
  * @param {Array} convexHull - An array of points that form the convex hull.
  * @param {string} currentStep - The current step in the process.
  * @returns {void}
+ * @memberof Jarvis-March
+ * @ignore
  */
   if (currentStep === "drawLines") {
     console.log(points);
@@ -278,6 +306,8 @@ nxtbtn.addEventListener("click", function () {
  * @param {Array} convexHull - An array of points that form the convex hull.
  * @param {string} currentStep - The current step in the process.
  * @returns {void}
+ * @memberof Jarvis-March
+ * @ignore
  */
   } else if (currentStep === "addLines") {
     // Remove previously drawn dashed lines
@@ -337,6 +367,7 @@ nxtbtn.addEventListener("click", function () {
  * When clicking the "Previous" button, it pops the last action from the history. If the last action was a "Next" action,
  * it removes the last added SVG element and pops the last point from the convex hull. If the "Next" button was disabled
  * due to reaching the end of actions, it enables both the "Next" button and the "Skip to End" button.
+ * @memberof Jarvis-March
  */
 prevbtn.addEventListener("click", function () {
   if(actionHistory.length === 1){
@@ -364,7 +395,8 @@ prevbtn.addEventListener("click", function () {
 * @param {Object} p2 - The second point.
 * @param {Object} p3 - The third point.
 * @returns {number} The cross product of the three points.
-*/
+ * @memberof Jarvis-March
+ */
 function crossProduct(p1, p2, p3) {
   return (p2.x - p1.x) * (p3.y - p1.y) - (p3.x - p1.x) * (p2.y - p1.y);
 }
@@ -374,6 +406,7 @@ function crossProduct(p1, p2, p3) {
  * @param {Object} p1 - The first point.
  * @param {Object} p2 - The second point.
  * @returns {number} The distance between the two points.
+ * @memberof Jarvis-March
  */
 function distance(p1, p2) {
   return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);

@@ -1,76 +1,102 @@
-/**
- * This array stores the input points for the kps algorithm<br>
- * Point object<br>
- * x: number  // x-coordinate on svg <br>
- * y: number  // y-coordinate on svg <br>
+/** @module Kirkpatrick-Seidel */
+
+/** 
+ * This array stores the input points for the kps algorithm
+ *
+ * Point object
+ *
+ * x: number  // x-coordinate on svg 
+ *
+ * y: number  // y-coordinate on svg 
+ *
  * @type {Array}
+ * @memberof Kirkpatrick-Seidel
  */
 const points = [];
 /**
  * This array stores the lines that make up the convex hull.
  * @type {Array}
+ * @memberof Kirkpatrick-Seidel
  */
 let convexHull = [];
 /**
  * This variable stores the SVG container element.
  * @type {HTMLElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const svg_container = document.getElementsByClassName("svg-container")[0];
 /**
  * This variable stores the SVG element.
  * @type {SVGElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 /**
  * This variable stores the Next Button element.
  * @type {HTMLElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const nxtbtn = document.getElementById("next-button");
 /**
  * This variable stores the Previous Button element.
  * @type {HTMLElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const prevbtn = document.getElementById("prev-button");
 /**
  * This variable stores the Add Random Button element.
  * @type {HTMLElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const arandom = document.getElementById("add-random-button");
 /**
  * This variable stores the Skip Steps Button element.
  * @type {HTMLElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const skipbtn = document.getElementById("skip-steps");
 /**
  * This variable stores the Skip to End Button element.
  * @type {HTMLElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const skipendbtn = document.getElementById("skip-end");
 /**
  * This variable stores the Add File Points Button element.
  * @type {HTMLElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const afilebtn = document.getElementById("get-file");
 /**
  * This variable stores the Add File input element.
  * @type {HTMLElement}
+ * @memberof Kirkpatrick-Seidel
  */
 const afile = document.getElementById("points-file");
 svg_container.appendChild(svg);
 svg.setAttribute("width", "100%");
 svg.setAttribute("height", "100%");
 /**
- * <b>Action[]</b>
- * Action object<br>
- * adot : {x: number, y: number, c: class}[]  // add these dots<br>
- * rdot : {x: number, y: number}[]  // remove these dots<br>
- * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  <br>
- * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines<br>
- * cdot : {x: number, y: number, c: class, pc: class}[]  // change dot class<br>
- * instr: "instruction to show"<br>
- * class => string<br>
+ * Action[]
+ * Action object
+ *
+ * adot : {x: number, y: number, c: class}[]  // add these dots
+ *
+ * rdot : {x: number, y: number}[]  // remove these dots
+ *
+ * aline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  
+ *
+ * rline: {x1: number, y1: number, x2: number, y2: number, c: class}[]  // remove these lines
+ *
+ * cdot : {x: number, y: number, c: class, pc: class}[]  // change dot class
+ *
+ * instr: "instruction to show"
+ *
+ * class => string
+ *
  * @type {Array}
-*/
+ * @memberof Kirkpatrick-Seidel
+ */
 const ACTIONS = [];
 var clickKara = 0;
 const textc = document.getElementById('text-container-left');
@@ -80,6 +106,7 @@ const textc = document.getElementById('text-container-left');
  * Parses a JSON file asynchronously.
  * @param {File} file - The JSON file to parse.
  * @returns {Promise<any>} A promise that resolves with the parsed JSON data.
+ * @memberof Kirkpatrick-Seidel
  */
 async function parseJsonFile(file) {
   return new Promise((resolve, reject) => {
@@ -96,6 +123,7 @@ async function parseJsonFile(file) {
  * 
  * @param {HTMLElement} buttonElement - The button element to which the click event listener will be attached.
  * @param {HTMLElement} fileInputElement - The file input element that will be clicked when the button is clicked.
+ * @memberof Kirkpatrick-Seidel
  */
 afilebtn.addEventListener("click", function() {
   afile.click();
@@ -105,6 +133,7 @@ afilebtn.addEventListener("click", function() {
  * It reads the selected JSON files, parses them, and adds them to an SVG.
  * 
  * @param {Event} event - The change event triggered by selecting files in the file input element.
+ * @memberof Kirkpatrick-Seidel
  */
 afile.addEventListener('change', function (event) {
   const files = event.target.files;
@@ -129,6 +158,7 @@ afile.addEventListener('change', function (event) {
 /**
  * Attaches a click event listener to the clear button element.
  * When clicked, it reloads the current page, effectively clearing the points.
+ * @memberof Kirkpatrick-Seidel
  */
 document.getElementById("clear-button").addEventListener("click", function () {
   location.reload(); // Reload the page
@@ -138,6 +168,7 @@ document.getElementById("clear-button").addEventListener("click", function () {
  * Attaches a click event listener to the "Random" button element.
  * When clicked, it generates random points within the SVG container and adds them to the SVG.
  * It also enables certain navigation buttons.
+ * @memberof Kirkpatrick-Seidel
  */
 arandom.addEventListener("click", function () {
   skipbtn.disabled = false;
@@ -159,6 +190,7 @@ arandom.addEventListener("click", function () {
 /**
  * Attaches a click event listener to the "Skip" button element.
  * When clicked, it triggers a click event on the "Next" button element five times.
+ * @memberof Kirkpatrick-Seidel
  */
 skipbtn.addEventListener("click", function(){
   for(var i = 0; i < 5; i++)
@@ -172,6 +204,7 @@ skipbtn.addEventListener("click", function(){
  * enables the "Previous" button, clears the ACTIONS array, invokes the kps function with the points array,
  * iterates through the convexHull array, adding lines to the SVG based on the hull points,
  * and sets the clickKara variable to the length of the ACTIONS array.
+ * @memberof Kirkpatrick-Seidel
  */
 skipendbtn.addEventListener('click', function(){
   nxtbtn.disabled = true;
@@ -202,6 +235,7 @@ skipendbtn.addEventListener('click', function(){
  * @param {Object} point1 - The first point with x and y coordinates.
  * @param {Object} point2 - The second point with x and y coordinates.
  * @returns {number} - The slope of the line passing through the two points.
+ * @memberof Kirkpatrick-Seidel
  */
 function getSlope(point1, point2) {
   return (point1.y - point2.y) / (point2.x - point1.x);
@@ -211,6 +245,7 @@ function getSlope(point1, point2) {
  * This algorithm identifies the extreme points, and then constructs the upper and lower hulls.
  * @param {Object[]} points - An array of points with x and y coordinates.
  * @returns {Object[]} - An array of points representing the convex hull.
+ * @memberof Kirkpatrick-Seidel
  */
 function kps(points) {
   // kps doesn't sort input points, we do so for simplicity of implementation
@@ -374,6 +409,7 @@ function kps(points) {
  * @param {Object} pmax - The rightmost point of the hull.
  * @param {Object[]} T - The set of points to compute the upper hull from.
  * @returns {Object[]} - An array of points representing the upper hull.
+ * @memberof Kirkpatrick-Seidel
  */
 function upper_hull(pmin, pmax, T) {
   if (pmin.x === pmax.x && pmin.y === pmax.y) {
@@ -542,6 +578,7 @@ function upper_hull(pmin, pmax, T) {
  * @param {Object[]} S - The set of points to compute the upper bridge from.
  * @param {number} L - The x-coordinate of the dividing line.
  * @returns {Object[]} - An array containing two points representing the upper bridge.
+ * @memberof Kirkpatrick-Seidel
  */
 function upper_bridge(S, L) {
   S.sort(function (a, b) {
@@ -767,6 +804,7 @@ function upper_bridge(S, L) {
  * @param {number} intercept - The y-intercept of the supporting line.
  * @param {boolean} islower - Indicates whether the supporting line is lower or upper.
  * @returns {Object} - An object representing the equation of the supporting line.
+ * @memberof Kirkpatrick-Seidel
  */
 function getSupportingLine(medianSlope, intercept, islower) {
   const h = svg.height.animVal.value, w = svg.width.animVal.value;
@@ -791,6 +829,7 @@ function getSupportingLine(medianSlope, intercept, islower) {
  * @param {number} x - The x-coordinate of the point.
  * @param {number} y - The y-coordinate of the point.
  * @param {string} [c] - The class attribute for styling the point (optional).
+ * @memberof Kirkpatrick-Seidel
  */
 function addPointToSvg(x, y, c) {
   const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -813,6 +852,7 @@ function addPointToSvg(x, y, c) {
  * @param {number} x2 - The x-coordinate of the ending point of the line.
  * @param {number} y2 - The y-coordinate of the ending point of the line.
  * @param {string} [c] - The class attribute for styling the line (optional).
+ * @memberof Kirkpatrick-Seidel
  */
 function addLineToSvg(x1, y1, x2, y2, c){
   const line = document.createElementNS(
@@ -836,6 +876,7 @@ function addLineToSvg(x1, y1, x2, y2, c){
  * the cloned dot element is removed from the SVG container.
  * 
  * @param {Element} dot - The dot element to be removed from the SVG container.
+ * @memberof Kirkpatrick-Seidel
  */
 function removeDotFromSvg(dot){
   var newdot = dot.cloneNode(true);
@@ -853,6 +894,7 @@ function removeDotFromSvg(dot){
  * the cloned line element is removed from the SVG container.
  * 
  * @param {Element} line - The line element to be removed from the SVG container.
+ * @memberof Kirkpatrick-Seidel
  */
 function removeLineFromSvg(line){
   var newline = line.cloneNode(true);
@@ -865,6 +907,7 @@ function removeLineFromSvg(line){
  * Event listener for clicking on the SVG container to add a point.
  * 
  * @param {MouseEvent} event - The mouse event object.
+ * @memberof Kirkpatrick-Seidel
  */
 svg.addEventListener("click", function(event) {
   // dont remove this idiot
@@ -895,6 +938,7 @@ svg.addEventListener("click", function(event) {
  * - If "aline" exists and is not empty, it adds lines to the SVG element based on the action data.
  * - If "rline" exists and is not empty, it removes lines from the SVG element based on the action data.
  * - If "cdot" exists and is not empty, it changes the class of dots in the SVG element based on the action data.
+ * @memberof Kirkpatrick-Seidel
  */
 nxtbtn.addEventListener("click", function() {
   if(clickKara === 0) {
@@ -1004,6 +1048,7 @@ nxtbtn.addEventListener("click", function() {
  * - If "aline" exists and is not empty, it removes lines from the SVG element based on the action data.
  * - If "cdot" exists and is not empty, it changes the class of dots in the SVG element based on the action data.
  * If the click counter reaches 0, it clears the actions array.
+ * @memberof Kirkpatrick-Seidel
  */
 prevbtn.addEventListener("click", function() {
   if(nxtbtn.disabled) {
