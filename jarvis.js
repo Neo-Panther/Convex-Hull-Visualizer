@@ -185,7 +185,7 @@ arandom.addEventListener("click", function () {
     const svgY = svgRect.top + 50;
     nxtbtn.disabled = false;
     skipendbtn.disabled = false;
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 50; i++) {
       const x = Math.floor(Math.random() * svgWidth) + svgX; // Random x within SVG container
       const y = Math.floor(Math.random() * svgHeight) + svgY; // Random y within SVG container
       addPointToSvg({ clientX: x, clientY: y }); // Call the existing function to add a point to the SVG

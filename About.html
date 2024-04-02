@@ -94,14 +94,55 @@
   <p><strong>Conclusion:</strong> Choose the KPS algorithm for efficiency and scalability, especially for large datasets. Opt for the Jarvis March algorithm for simplicity and smaller datasets.</p>
   <hr>
   <h1>Code Analysis</h1>
-  <h2>Jarvis March Implementation</h2>
-  <p>
-    <!--TODO-->
-  </p>
-  <h2>Kirkpatrick-Seidel Implementation</h2>
-  <p>
-    <!--TODO-->
-  </p>
+  <h2> Kirkpatrick-Seidel Algorithm Implementation Analysis</h2>
+  <ol>
+    <li>
+      <h3>kps Function</h3>
+      <p>
+        This function sorts the input points based on their x-coordinate and y-coordinate. It divides the points into upper and lower hulls using the concept of upper_bridge and upper_hull functions. It then merges the upper and lower hulls to form the final convex hull.
+      </p>
+      <p><strong>Time Complexity:</strong> O(n log n) - due to sorting, where n is the number of input points.</p>
+    </li>
+    <li>
+      <h3>upper_hull Function</h3>
+      <p>
+        This function finds the upper hull of a set of points using the divide and conquer approach. It recursively divides the points into left and right halves based on the median x-coordinate. It finds the upper bridge, which is the upper part of the convex hull connecting the left and right halves.
+      </p>
+      <p><strong>Time Complexity:</strong> O(n log n) - each recursive call divides the points in half, and upper_bridge takes O(n log n) time.</p>
+    </li>
+    <li>
+      <h3>upper_bridge Function</h3>
+      <p>
+        This function finds the upper bridge of a set of points. It pairs the points based on their x-coordinate and calculates the slopes of the pairs. It recursively selects pairs based on the median slope until it finds the upper bridge.
+      </p>
+      <p><strong>Time Complexity:</strong> O(n log n) - due to sorting and selection of pairs based on median slope.</p>
+    </li>
+  </ol>
+  <h2>Jarvis March Implementation Analysis</h2>
+
+  <ol>
+    <li>
+      <h3>Draw Lines Block</h3>
+      <p>
+        This block of code draws dashed lines between points in the convex hull. It identifies the leftmost point in the convex hull, and creates dashed lines between the leftmost point and each other point except the last one. It then updates the current step to "addLines".
+      </p>
+      <p><strong>Time Complexity:</strong> O(n) - where n is the number of points in input.</p>
+    </li>
+    <li>
+      <h3>Add Lines Block</h3>
+      <p>
+        This block of code adds lines to the convex hull. It first removes any previously drawn dashed lines, identifies the leftmost point in the convex hull, and determines the next point in the hull. The next point is either the first point in the points array or a point that forms a left turn or is further away in case of a tie. The next point is then added to the convex hull, and the action is added to the history. Finally, it draws the convex hull line and updates the current step to "drawLines".
+      </p>
+      <p><strong>Time Complexity:</strong> O(n) - where n is the number of points in input.</p>
+    </li>
+    <li>
+      <h3>Repeat</h3>
+      <p>
+        Above two blocks are repeated for each hull point.
+      </p>
+      <p><strong>Total Time Complexity:</strong> O(n*h) - where h is the number of points in the hull.</p>
+    </li>
+  </ol>
 </div>
 
 </body>
