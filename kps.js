@@ -215,8 +215,11 @@ skipendbtn.addEventListener('click', function(){
   prevbtn.disabled = false;
   ACTIONS.length = 0;
   convexHull.length = 0;
+  const stime = Date.now();
   console.log("kps points");
-  console.log(...kps(points));
+  const a = kps(points);
+  const tm = Date.now() - stime;
+  console.log(...a)
   const lines = document.getElementsByTagName("line");
   const dots = document.getElementsByTagName("circle");
   for(const dot of dots)
@@ -229,6 +232,7 @@ skipendbtn.addEventListener('click', function(){
     addLineToSvg(hull.x1, (hull.y1 >= 0)? hull.y1: -hull.y1, hull.x2, (hull.y2 >= 0)? hull.y2: -hull.y2, "hull");
   }
   clickKara = ACTIONS.length;
+  textc.innerHTML = "Running Time ("+String(points.length)+" total points, "+String(a.length)+" hull points): " + String(tm) + "ms";
 });
 /**
  * Calculates the inverted slope of a line passing through two points.
@@ -842,7 +846,6 @@ function addPointToSvg(x, y, c) {
   dot.setAttribute("cy", y);
   if(c) dot.setAttribute("class", c);
   svg.appendChild(dot);
-  console.log("element=", dot);
 }
 /**
  * Adds a line to the SVG container.
@@ -870,7 +873,6 @@ function addLineToSvg(x1, y1, x2, y2, c){
   line.setAttribute("y2", y2);
   if(c)  line.classList.add(c);
   svg.appendChild(line);
-  console.log("element=", line);
 }
 /**
  * Removes a dot element from the SVG container.
@@ -966,25 +968,20 @@ nxtbtn.addEventListener("click", function() {
   }
   currentAction = ACTIONS[clickKara-1];
   textc.innerHTML = currentAction.instr;
-  console.log("click", clickKara);
 
   if ("adot" in currentAction && currentAction.adot.length != 0){
     for(const dot of currentAction.adot){
       if(dot.y < 0) dot.y *= -1;
     }
-    console.log("add dot", currentAction.adot);
     for(const dot of currentAction.adot){
-      console.log(dot);
       addPointToSvg(dot.x, dot.y, dot.c);
     }
   } 
   if ("rdot" in currentAction && currentAction.rdot.length != 0) {
     const dots = document.getElementsByTagName("circle");
-    console.log(dots);
     for(const dot of currentAction.rdot){
       if(dot.y < 0) dot.y *= -1;
     }
-    console.log("remove dot", currentAction.rdot);
     for(const irdot of currentAction.rdot){
       for(const dot of dots){
         if(Number(dot.getAttribute('cx')) === irdot.x && Number(dot.getAttribute('cy')) === irdot.y){
@@ -999,9 +996,7 @@ nxtbtn.addEventListener("click", function() {
       if(line.y1 < 0) line.y1 *= -1;
       if(line.y2 < 0) line.y2 *= -1;
     }
-    console.log("add line", currentAction.aline);
     for(const line of currentAction.aline){
-      console.log(line);
       addLineToSvg(line.x1, line.y1, line.x2, line.y2, line.c);
     }
   } 
@@ -1011,7 +1006,6 @@ nxtbtn.addEventListener("click", function() {
       if(line.y1 < 0) line.y1 *= -1;
       if(line.y2 < 0) line.y2 *= -1;
     }
-    console.log("remove line", currentAction.rline);
     const lines = document.getElementsByTagName("line");
     for(const irline of currentAction.rline){
       for(const line of lines){
@@ -1025,7 +1019,6 @@ nxtbtn.addEventListener("click", function() {
     for(const dot of currentAction.cdot){
       if(dot.y < 0) dot.y *= -1;
     }
-    console.log("change class dot", currentAction.cdot);
     const dots = document.getElementsByTagName("circle");
     const dots2 = [...dots];
     for(const icdot of currentAction.cdot){
@@ -1076,23 +1069,18 @@ prevbtn.addEventListener("click", function() {
     for(const dot of currentAction.rdot){
       if(dot.y < 0) dot.y *= -1;
     }
-    console.log("add dot", currentAction.rdot);
     for(const dot of currentAction.rdot){
-      console.log(dot);
       addPointToSvg(dot.x, dot.y, dot.c);
     }
   } 
   if ("adot" in currentAction && currentAction.adot.length != 0) {
     const dots = document.getElementsByTagName("circle");
-    console.log(dots);
     for(const dot of currentAction.adot){
       if(dot.y < 0) dot.y *= -1;
     }
-    console.log("remove dot", currentAction.adot);
     for(const irdot of currentAction.adot){
       for(const dot of dots){
         if(Number(dot.getAttribute('cx')) === irdot.x && Number(dot.getAttribute('cy')) === irdot.y){
-          console.log(dot);
           dot.remove();
         }
       }
@@ -1104,9 +1092,7 @@ prevbtn.addEventListener("click", function() {
       if(line.y1 < 0) line.y1 *= -1;
       if(line.y2 < 0) line.y2 *= -1;
     }
-    console.log("add line", currentAction.rline);
     for(const line of currentAction.rline){
-      console.log(line);
       addLineToSvg(line.x1, line.y1, line.x2, line.y2, line.c);
     }
   } 
@@ -1116,12 +1102,10 @@ prevbtn.addEventListener("click", function() {
       if(line.y1 < 0) line.y1 *= -1;
       if(line.y2 < 0) line.y2 *= -1;
     }
-    console.log("remove line", currentAction.aline);
     const lines = document.getElementsByTagName("line");
     for(const irline of currentAction.aline){
       for(const line of lines){
         if(Number(line.getAttribute('x1')) === irline.x1 && Number(line.getAttribute('y1')) === irline.y1 && Number(line.getAttribute('x2')) === irline.x2 && Number(line.getAttribute('y2')) === irline.y2 && line.classList.contains(irline.c)){
-          console.log(line);
           line.remove();
         }
       }
@@ -1131,12 +1115,10 @@ prevbtn.addEventListener("click", function() {
     for(const dot of currentAction.cdot){
       if(dot.y < 0) dot.y *= -1;
     }
-    console.log("change class dot", currentAction.cdot);
     const dots = document.getElementsByTagName("circle");
     for(const icdot of currentAction.cdot){
       for(const dot of dots){
         if(Number(dot.getAttribute('cx')) === icdot.x && Number(dot.getAttribute('cy')) === icdot.y){
-          console.log(dot);
           dot.setAttribute("class", icdot.pc);
         }
       }

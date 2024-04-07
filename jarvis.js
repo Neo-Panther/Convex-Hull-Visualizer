@@ -151,9 +151,12 @@ afile.addEventListener('change', function (event) {
 skipendbtn.addEventListener('click', function(){
   afilebtn.disabled = true;
   arandom.disabled = true;
+  var tm = Date.now();
+  console.log("Start Time: " + String(tm));
   while(!nxtbtn.disabled){
     nxtbtn.click();
   }
+  console.log("Total Time Taken: " + String(Date.now() - tm) + " ms");
 });
 /**
  * This event listener is triggered when the 'clear-button' button is clicked.
@@ -273,7 +276,6 @@ nxtbtn.addEventListener("click", function () {
  * @ignore
  */
   if (currentStep === "drawLines") {
-    console.log(points);
     const leftmost = convexHull[convexHull.length - 1];
     let lastPoint;
     if (convexHull.length >= 2) lastPoint = convexHull[convexHull.length - 2];
