@@ -208,6 +208,7 @@ skipbtn.addEventListener("click", function(){
  */
 skipendbtn.addEventListener('click', function(){
   console.time("Time for complete run");
+  svg.classList.add("running");
   nxtbtn.disabled = true;
   skipbtn.disabled = true;
   skipendbtn.disabled = true;
