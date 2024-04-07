@@ -149,14 +149,13 @@ afile.addEventListener('change', function (event) {
  * @memberof Jarvis-March
  */
 skipendbtn.addEventListener('click', function(){
+  console.time("Total Time Taken");
   afilebtn.disabled = true;
   arandom.disabled = true;
-  var tm = Date.now();
-  console.log("Start Time: " + String(tm));
   while(!nxtbtn.disabled){
     nxtbtn.click();
   }
-  console.log("Total Time Taken: " + String(Date.now() - tm) + " ms");
+  console.timeEnd("Total Time Taken");
 });
 /**
  * This event listener is triggered when the 'clear-button' button is clicked.

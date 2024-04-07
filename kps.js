@@ -207,6 +207,7 @@ skipbtn.addEventListener("click", function(){
  * @memberof Kirkpatrick-Seidel
  */
 skipendbtn.addEventListener('click', function(){
+  console.time("Time for complete run");
   nxtbtn.disabled = true;
   skipbtn.disabled = true;
   skipendbtn.disabled = true;
@@ -215,24 +216,23 @@ skipendbtn.addEventListener('click', function(){
   prevbtn.disabled = false;
   ACTIONS.length = 0;
   convexHull.length = 0;
-  const stime = Date.now();
-  console.log("kps points");
   const a = kps(points);
-  const tm = Date.now() - stime;
+  console.log("kps points");
   console.log(...a)
   const lines = document.getElementsByTagName("line");
   const dots = document.getElementsByTagName("circle");
   for(const dot of dots)
-    removeDotFromSvg(dot);
-  for(const line of lines)
-    removeLineFromSvg(line);
-  for(const point of points)
-    addPointToSvg(point.x, point.y);
-  for(const hull of convexHull){
-    addLineToSvg(hull.x1, (hull.y1 >= 0)? hull.y1: -hull.y1, hull.x2, (hull.y2 >= 0)? hull.y2: -hull.y2, "hull");
-  }
+  removeDotFromSvg(dot);
+for(const line of lines)
+removeLineFromSvg(line);
+for(const point of points)
+addPointToSvg(point.x, point.y);
+for(const hull of convexHull){
+  addLineToSvg(hull.x1, (hull.y1 >= 0)? hull.y1: -hull.y1, hull.x2, (hull.y2 >= 0)? hull.y2: -hull.y2, "hull");
+}
   clickKara = ACTIONS.length;
-  textc.innerHTML = "Running Time ("+String(points.length)+" total points, "+String(a.length)+" hull points): " + String(tm) + "ms";
+  textc.innerHTML = ""+String(points.length)+" total points, "+String(a.length-1)+" hull points. Check console for the running time.";
+  console.timeEnd("Time for complete run");
 });
 /**
  * Calculates the inverted slope of a line passing through two points.
